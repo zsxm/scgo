@@ -2,7 +2,6 @@ package logger
 
 import (
 	"fmt"
-	"log"
 	"sync"
 )
 
@@ -14,11 +13,12 @@ func Register(name string, log loggerFunc) {
 	logFuncs[name] = log
 }
 
-func NewLogger() *Logger {
+func NewLogger(moduleName string) *Logger {
 	e := &Logger{
-		level:  ALL,
-		msg:    make(chan *msg, 10000),
-		logOut: make(map[string]LoggerInterface),
+		level:      ALL,
+		msg:        make(chan *msg, 10000),
+		logOut:     make(map[string]LoggerInterface),
+		moduleName: moduleName,
 	}
 	go e.startLog()
 	return e
@@ -30,10 +30,11 @@ type msg struct {
 }
 
 type Logger struct {
-	lock   sync.Mutex
-	level  int
-	msg    chan *msg
-	logOut map[string]LoggerInterface
+	moduleName string
+	lock       sync.Mutex
+	level      int
+	msg        chan *msg
+	logOut     map[string]LoggerInterface
 }
 
 func (this *Logger) SetLogOut(name string, config string) error {
@@ -66,7 +67,7 @@ func (this *Logger) startLog() {
 func (this *Logger) write(level int, v ...interface{}) {
 	m := new(msg)
 	m.level = level
-	m.msg = fmt.Sprint(LOG_LEVEL[level], " ", fmt.Sprint(v...))
+	m.msg = fmt.Sprint(LOG_LEVEL[level], " ", this.moduleName, " ", fmt.Sprint(v...))
 	this.msg <- m
 }
 

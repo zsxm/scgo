@@ -6,7 +6,7 @@ package entity
 import (
 	"bytes"
 	"fmt"
-	"github.com/snxamdf/scgo/data"
+	"github.com/zsxm/scgo/data"
 	"strconv"
 )
 

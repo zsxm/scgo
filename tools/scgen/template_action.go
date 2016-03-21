@@ -4,7 +4,7 @@ var actionTemp = `//scgen
 package action
 
 import (
-	"github.com/sxmgo/scgo/core/chttp"
+	"github.com/zsxm/scgo/chttp"
 	"{{.GenEntity.ProjectDir}}/{{.GenEntity.GoSourceDir}}/{{.GenEntity.ModuleName}}/entity"
 )
 

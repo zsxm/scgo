@@ -5,8 +5,8 @@ package service
 
 import (
 	"database/sql"
-	"github.com/snxamdf/scgo/data"
-	"github.com/snxamdf/scgo/data/scdb"
+	"github.com/zsxm/scgo/data"
+	"github.com/zsxm/scgo/data/scdb"
 )
 
 var {{.Name}}Service = {{lowerFirst .Name}}Service{

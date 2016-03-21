@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+	<dbs default="mysql_test">
+		<db id="mysql_dev">
+			<driverName>mysql</driverName>
+			<userName>root</userName>
+			<passWord>root</passWord>
+			<ip>localhost</ip>
+			<prot>3306</prot>
+			<database>testdb</database>
+			<charset>UTF8</charset>
+			<maxIdleConns>10</maxIdleConns>
+			<maxOpenConns>100</maxOpenConns>
+		</db>
+		<db id="mysql_test">
+			<driverName>mysql</driverName>
+			<userName>root</userName>
+			<passWord>root</passWord>
+			<ip>localhost</ip>
+			<prot>3306</prot>
+			<database>testdb</database>
+			<charset>UTF8</charset>
+			<maxIdleConns>10</maxIdleConns>
+			<maxOpenConns>100</maxOpenConns>
+		</db>
+	</dbs>
+</config>

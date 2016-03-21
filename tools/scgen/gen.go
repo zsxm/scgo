@@ -6,9 +6,9 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/snxamdf/scgo/tools"
-	"github.com/snxamdf/scgo/tools/annotation"
-	"github.com/snxamdf/scgo/tools/gen"
+	"github.com/zsxm/scgo/tools"
+	"github.com/zsxm/scgo/tools/annotation"
+	"github.com/zsxm/scgo/tools/gen"
 )
 
 //生成实体实现类 xxxx_entity_impl.go

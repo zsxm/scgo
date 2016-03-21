@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/snxamdf/scgo/tools/gen"
+	"github.com/zsxm/scgo/tools/gen"
 )
 
 //实体映射表

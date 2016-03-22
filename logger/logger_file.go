@@ -58,12 +58,12 @@ func (this *logFile) init(xml loggerXml) error {
 }
 
 func (this *logFile) write(level int, msg string) error {
+	if this.level >= level {
+		this.lg.Println(msg)
+	}
 	err := this.fileSize()
 	if err != nil {
 		return err
-	}
-	if this.level >= level {
-		this.lg.Println(msg)
 	}
 	return nil
 }

@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/zsxm/scgo/tools/cxml"
@@ -29,22 +30,27 @@ type Logger struct {
 	Logger    loggerXml `xml:"logger"`
 }
 
+var logger *Logger
+
 func NewLogger(modelName string) *Logger {
-	e := &Logger{
-		modelName: modelName,
-		level:     all,
-		msg:       make(chan *msg, 10000),
-		logOut:    make(map[string]LoggerInterface),
+	if logger == nil {
+		e := &Logger{
+			modelName: modelName,
+			level:     all,
+			msg:       make(chan *msg, 10000),
+			logOut:    make(map[string]LoggerInterface),
+		}
+		e.xmlInit()
+		if e.Logger.Console {
+			e.setOut("console", e.Logger)
+		}
+		if e.Logger.File {
+			e.setOut("file", e.Logger)
+		}
+		logger = e
+		go logger.start()
 	}
-	e.xmlInit()
-	if e.Logger.Console {
-		e.setOut("console", e.Logger)
-	}
-	if e.Logger.File {
-		e.setOut("file", e.Logger)
-	}
-	go e.start()
-	return e
+	return logger
 }
 
 func (this *Logger) xmlInit() error {
@@ -72,7 +78,10 @@ func (this *Logger) start() {
 		select {
 		case m := <-this.msg:
 			for _, v := range this.logOut {
-				v.write(m.level, m.msg)
+				err := v.write(m.level, m.msg)
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		}
 	}

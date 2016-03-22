@@ -17,6 +17,6 @@ var (
 	log_level = []string{"OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "ALL"}
 	path      = "logs/"
 	ext       = ".log"
-	maxSize   = int64(10485760)
+	maxSize   = int64(10240000)
 	fileName  = "log."
 )

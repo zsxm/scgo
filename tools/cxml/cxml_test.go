@@ -1,4 +1,4 @@
-package logger_test
+package cxml_test
 
 import (
 	"sync"
@@ -7,7 +7,7 @@ import (
 	"github.com/zsxm/scgo/logger"
 )
 
-func TestLogger(t *testing.T) {
+func TestCxml(t *testing.T) {
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	logr := logger.NewLogger("test")

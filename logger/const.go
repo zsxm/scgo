@@ -9,6 +9,9 @@ const (
 	debug
 	all
 )
+const (
+	xml_path = "conf/logger.xml"
+)
 
 var (
 	log_level = []string{"OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "ALL"}

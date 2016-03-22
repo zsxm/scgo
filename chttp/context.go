@@ -6,7 +6,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -16,6 +15,7 @@ import (
 	"time"
 
 	"github.com/zsxm/scgo/data"
+	"github.com/zsxm/scgo/log"
 	"github.com/zsxm/scgo/tools"
 )
 
@@ -63,15 +63,15 @@ func (this *Context) HTML(name string, datas interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			if Conf.Debug {
-				log.Println(err, string(debug.Stack()))
+				log.Debug(err, string(debug.Stack()))
 			} else {
-				log.Panicln(err)
+				log.Info(err)
 			}
 		}
 	}()
 	t, err := template.ParseFiles(Conf.Template.Dir + name + TEMP_SUFFIX)
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 	}
 	//this.SetHeader("Content-Type", "application/html; charset=utf-8")
 	dtam := dataToArrayMap(datas)
@@ -144,9 +144,9 @@ func (this *Context) JSON(v interface{}, hasIndent bool) {
 	defer func() {
 		if err := recover(); err != nil {
 			if Conf.Debug {
-				log.Println(err, string(debug.Stack()))
+				log.Debug(err, string(debug.Stack()))
 			} else {
-				log.Panicln(err)
+				log.Info(err)
 			}
 		}
 	}()
@@ -183,9 +183,9 @@ func (this *Context) Xml(data interface{}, hasIndent bool) {
 	defer func() {
 		if err := recover(); err != nil {
 			if Conf.Debug {
-				log.Println(err, string(debug.Stack()))
+				log.Debug(err, string(debug.Stack()))
 			} else {
-				log.Panicln(err)
+				log.Info(err)
 			}
 		}
 	}()
@@ -209,9 +209,9 @@ func (this *Context) Download(file string, filename ...string) {
 	defer func() {
 		if err := recover(); err != nil {
 			if Conf.Debug {
-				log.Println(err, string(debug.Stack()))
+				log.Debug(err, string(debug.Stack()))
 			} else {
-				log.Panicln(err)
+				log.Info(err)
 			}
 		}
 	}()

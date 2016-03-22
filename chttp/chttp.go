@@ -1,11 +1,12 @@
 package chttp
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 	"runtime/debug"
 	"strings"
+
+	"github.com/zsxm/scgo/log"
 )
 
 type action map[string]*curl
@@ -32,9 +33,9 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
 			if Conf.Debug {
-				log.Println(err, string(debug.Stack()))
+				log.Debug(err, string(debug.Stack()))
 			} else {
-				log.Panicln(err)
+				log.Info(err)
 			}
 			this.Error500(w, r)
 		}
@@ -59,16 +60,16 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			} else {
 				c, err := this.Context(w, r)
 				if err != nil {
-					log.Println(err)
+					log.Info(err)
 				}
 				murl.mfunc(c) //调用函数
 			}
 		} else {
-			log.Println("未找到这个 URL", url, "URL 请求方式", murl.method, ",当前请求方式", r.Method)
+			log.Info("未找到这个 URL", url, "URL 请求方式", murl.method, ",当前请求方式", r.Method)
 			this.Error404(w, r)
 		}
 	} else {
-		log.Println("未找到这个 URL", url, ",请求方式", r.Method)
+		log.Info("未找到这个 URL", url, ",请求方式", r.Method)
 		this.Error404(w, r)
 	}
 }
@@ -124,7 +125,7 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 	values := url.Values{}
 	err := r.ParseForm()
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 		return Context{}, err
 	}
 	if r.Method == GET {
@@ -143,9 +144,9 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 
 //运行服务
 func Run() {
-	log.Println("HTTP PROT", Conf.Port)
+	log.Info("HTTP PROT", Conf.Port)
 	err := http.ListenAndServe(Conf.Port, route)
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 	}
 }

@@ -1,17 +1,17 @@
 package logger
 
 const (
-	OFF = iota
-	FATAL
-	ERROR
-	WARN
-	INFO
-	DEBUG
-	ALL
+	off = iota
+	fatal
+	err
+	warn
+	info
+	debug
+	all
 )
 
 var (
-	LOG_LEVEL = []string{"OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "ALL"}
+	log_level = []string{"OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "ALL"}
 	path      = "logs/"
 	ext       = ".log"
 	maxSize   = int64(10485760)

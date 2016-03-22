@@ -1,6 +1,14 @@
 package logger
 
 type LoggerInterface interface {
-	Init(config string) error
-	Write(level int, msg string)
+	init(config string) error
+	write(level int, msg string) error
+}
+
+type loggerFunc func() LoggerInterface
+
+var logFuncs = make(map[string]loggerFunc)
+
+func register(name string, log loggerFunc) {
+	logFuncs[name] = log
 }

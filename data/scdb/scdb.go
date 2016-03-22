@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/snxamdf/scgo/data"
+	"github.com/zsxm/scgo/data"
 )
 
 type DBSourceInterface interface {

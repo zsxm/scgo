@@ -2,12 +2,12 @@ package scdb
 
 import (
 	"database/sql"
-	"log"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/snxamdf/scgo/data"
-	"github.com/snxamdf/scgo/data/dbconfig"
-	"github.com/snxamdf/scgo/data/scsql"
+	"github.com/zsxm/scgo/data"
+	"github.com/zsxm/scgo/data/dbconfig"
+	"github.com/zsxm/scgo/data/scsql"
+	"github.com/zsxm/scgo/log"
 )
 
 var Connection RepositoryInterface
@@ -64,14 +64,14 @@ func (this *Repository) Save(entity data.EntityInterface) (sql.Result, error) {
 
 	stmt, err := this.Prepare(csql)
 	if err != nil {
-		log.Println("error", err)
+		log.Info("error", err)
 		return nil, err
 	}
 	defer stmt.Close()
 
 	result, err := stmt.Exec(csql.Args...)
 	if err != nil {
-		log.Println("error", err)
+		log.Info("error", err)
 		return nil, err
 	}
 	return result, nil
@@ -87,14 +87,14 @@ func (this *Repository) Update(entity data.EntityInterface) (sql.Result, error) 
 
 	stmt, err := this.Prepare(csql)
 	if err != nil {
-		log.Println("error", err)
+		log.Info("error", err)
 		return nil, err
 	}
 	defer stmt.Close()
 
 	result, err := stmt.Exec(csql.Args...)
 	if err != nil {
-		log.Println("error", err)
+		log.Info("error", err)
 		return nil, err
 	}
 	return result, nil
@@ -119,14 +119,14 @@ func (this *Repository) Delete(entity data.EntityInterface) (sql.Result, error) 
 	}
 	stmt, err := this.Prepare(csql)
 	if err != nil {
-		log.Println("error", err)
+		log.Info("error", err)
 		return nil, err
 	}
 	defer stmt.Close()
 
 	result, err := stmt.Exec(csql.Args...)
 	if err != nil {
-		log.Println("error", err)
+		log.Info("error", err)
 		return nil, err
 	}
 	return result, nil
@@ -137,27 +137,27 @@ func (this *Repository) SelectOne(entity data.EntityInterface) error {
 	csql := scsql.SCSQL{DataBaseType: this.dBSource.DataBaseType(), S_TYPE: scsql.SC_S_ONE, Table: table, Entity: entity}
 	err := csql.ParseSQL()
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 		return err
 	}
 
 	stmt, err := this.Prepare(csql)
 	if err != nil {
-		log.Println("error stmt", err)
+		log.Info("error stmt", err)
 		return err
 	}
 	defer stmt.Close()
 
 	rows, err := stmt.Query(csql.Args...)
 	if err != nil {
-		log.Println("error rows", err)
+		log.Info("error rows", err)
 		return err
 	}
 	defer rows.Close()
 
 	cols, err := rows.Columns()
 	if err != nil {
-		log.Println("error cols", err)
+		log.Info("error cols", err)
 		return err
 	}
 
@@ -173,7 +173,7 @@ func (this *Repository) SelectOne(entity data.EntityInterface) error {
 		}
 		err = rows.Scan(vals...)
 		if err != nil {
-			log.Println("error", err)
+			log.Info("error", err)
 			return err
 		}
 		return nil
@@ -186,19 +186,19 @@ func (this *Repository) SelectCount(entity data.EntityInterface) (int, error) {
 	csql := scsql.SCSQL{DataBaseType: this.dBSource.DataBaseType(), S_TYPE: scsql.SC_S_COUNT, Table: table, Entity: entity}
 	err := csql.ParseSQL()
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 		return 0, err
 	}
 	stmt, err := this.Prepare(csql)
 	if err != nil {
-		log.Println("error stmt", err)
+		log.Info("error stmt", err)
 		return 0, err
 	}
 	defer stmt.Close()
 
 	rows, err := stmt.Query(csql.Args...)
 	if err != nil {
-		log.Println("error rows", err)
+		log.Info("error rows", err)
 		return 0, err
 	}
 	defer rows.Close()
@@ -206,7 +206,7 @@ func (this *Repository) SelectCount(entity data.EntityInterface) (int, error) {
 	for rows.Next() {
 		err = rows.Scan(&resCount)
 		if err != nil {
-			log.Println("error", err)
+			log.Info("error", err)
 			return 0, err
 		}
 		return resCount, nil
@@ -223,12 +223,12 @@ func (this *Repository) SelectPage(entityBean data.EntityBeanInterface, page *da
 	csql := scsql.SCSQL{DataBaseType: this.dBSource.DataBaseType(), S_TYPE: scsql.SC_S_PAGE, Table: table, Entity: entity, Page: page}
 	err := csql.ParseSQL()
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 		return err
 	}
 	count, err := this.SelectCount(entity)
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 		return err
 	}
 	page.TotalRow = count
@@ -248,7 +248,7 @@ func (this *Repository) Select(entityBean data.EntityBeanInterface) error {
 	csql := scsql.SCSQL{DataBaseType: this.dBSource.DataBaseType(), S_TYPE: scsql.SC_S, Table: table, Entity: entity}
 	err := csql.ParseSQL()
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 		return err
 	}
 
@@ -258,21 +258,21 @@ func (this *Repository) Select(entityBean data.EntityBeanInterface) error {
 func (this *Repository) selected(csql scsql.SCSQL, entityBean data.EntityBeanInterface) error {
 	stmt, err := this.Prepare(csql)
 	if err != nil {
-		log.Println("error stmt", err)
+		log.Info("error stmt", err)
 		return err
 	}
 	defer stmt.Close()
 
 	rows, err := stmt.Query(csql.Args...)
 	if err != nil {
-		log.Println("error rows", err)
+		log.Info("error rows", err)
 		return err
 	}
 	defer rows.Close()
 
 	cols, err := rows.Columns()
 	if err != nil {
-		log.Println("error cols", err)
+		log.Info("error cols", err)
 		return err
 	}
 
@@ -289,7 +289,7 @@ func (this *Repository) selected(csql scsql.SCSQL, entityBean data.EntityBeanInt
 		}
 		err = rows.Scan(vals...)
 		if err != nil {
-			log.Println("error scan", err)
+			log.Info("error scan", err)
 			return err
 		}
 		beans.Add(bean)

@@ -6,29 +6,30 @@ import (
 	"os"
 )
 
-type Console struct {
+type console struct {
 	lg    *log.Logger
 	Level int `json:"level"`
 }
 
-func NewConsole() LoggerInterface {
-	cw := &Console{
+func newConsole() LoggerInterface {
+	cw := &console{
 		lg:    log.New(os.Stdout, "", log.Ldate|log.Ltime),
-		Level: ALL,
+		Level: all,
 	}
 	return cw
 }
 
-func (this *Console) Init(config string) error {
+func (this *console) init(config string) error {
 	return json.Unmarshal([]byte(config), this)
 }
 
-func (this *Console) Write(level int, msg string) {
+func (this *console) write(level int, msg string) error {
 	if this.Level > level {
 		log.Println(msg)
 	}
+	return nil
 }
 
 func init() {
-	Register("console", NewConsole)
+	register("console", newConsole)
 }

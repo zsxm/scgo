@@ -6,5 +6,6 @@ type GenEntity struct {
 
 const (
 	GEN_ACTION  = "action"
+	GEN_LOG     = "log"
 	GEN_SERVICE = "service"
 )

@@ -8,7 +8,6 @@ import (
 	"encoding/xml"
 	"io"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net"
 	"net/http"
@@ -19,6 +18,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/zsxm/scgo/log"
 )
 
 var defaultSetting = HttpSettings{
@@ -57,7 +58,8 @@ func NewRequest(rawurl, method string) *HttpRequest {
 	var resp http.Response
 	u, err := url.Parse(rawurl)
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return nil
 	}
 	req := http.Request{
 		URL:        u,
@@ -304,17 +306,20 @@ func (b *HttpRequest) buildUrl(paramBody string) {
 				for formname, filename := range b.files {
 					fileWriter, err := bodyWriter.CreateFormFile(formname, filename)
 					if err != nil {
-						log.Fatal(err)
+						log.Info(err)
+						return
 					}
 					fh, err := os.Open(filename)
 					if err != nil {
-						log.Fatal(err)
+						log.Info(err)
+						return
 					}
 					//iocopy
 					_, err = io.Copy(fileWriter, fh)
 					fh.Close()
 					if err != nil {
-						log.Fatal(err)
+						log.Info(err)
+						return
 					}
 				}
 				for k, v := range b.params {
@@ -414,7 +419,8 @@ func (b *HttpRequest) SendOut() (*http.Response, error) {
 	if b.setting.ShowDebug {
 		dump, err := httputil.DumpRequest(b.req, b.setting.DumpBody)
 		if err != nil {
-			log.Println(err.Error())
+			log.Info(err.Error())
+			return nil, err
 		}
 		b.dump = dump
 	}

@@ -3,7 +3,8 @@ package dbconfig
 import (
 	"encoding/xml"
 	"io/ioutil"
-	"log"
+
+	"github.com/zsxm/scgo/log"
 )
 
 var (
@@ -45,11 +46,11 @@ type DBConfigInterface interface {
 func (Config) Init() {
 	content, err := ioutil.ReadFile(Conf.FilePath)
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 	}
 	err = xml.Unmarshal(content, &Conf)
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 	}
 }
 

@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"log"
 	"sort"
 	"strconv"
 	"strings"
 
-	"github.com/snxamdf/scgo/data"
-	"github.com/snxamdf/scgo/tools"
-	"github.com/snxamdf/scgo/tools/uuid"
+	"github.com/zsxm/scgo/data"
+	"github.com/zsxm/scgo/log"
+	"github.com/zsxm/scgo/tools"
+	"github.com/zsxm/scgo/tools/uuid"
 )
 
 const (
@@ -415,7 +415,7 @@ func (this *sift) genSiftSql() (string, []interface{}) {
 
 //sql
 func (this *SCSQL) SQL() string {
-	log.Println("SQL :", this.sql, "ARGS :", this.Args)
+	log.Info("SQL :", this.sql, "ARGS :", this.Args)
 	return this.sql
 }
 

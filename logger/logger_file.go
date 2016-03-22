@@ -10,36 +10,36 @@ import (
 	"github.com/zsxm/scgo/tools/date"
 )
 
-type LogFile struct {
+type logFile struct {
+	filepath string
 	lg       *log.Logger
-	mw       *MuxWriter
+	mw       *muxWriter
 	FileName string `json:"filename"`
 	Level    int    `json:"level"`
 	MaxSize  int64  `json:"maxSize"`
-	filepath string
 }
 
-type MuxWriter struct {
+type muxWriter struct {
 	sync.Mutex
 	fd *os.File
 }
 
-func (this *MuxWriter) Write(b []byte) (int, error) {
+func (this *muxWriter) Write(b []byte) (int, error) {
 	this.Lock()
 	defer this.Unlock()
 	return this.fd.Write(b)
 }
 
-func NewLogFile() LoggerInterface {
-	cw := &LogFile{
-		Level: ALL,
+func newLogFile() LoggerInterface {
+	cw := &logFile{
+		Level: all,
 	}
-	cw.mw = new(MuxWriter)
+	cw.mw = new(muxWriter)
 	cw.lg = log.New(cw.mw, "", log.Ldate|log.Ltime)
 	return cw
 }
 
-func (this *LogFile) Init(config string) error {
+func (this *logFile) init(config string) error {
 	json.Unmarshal([]byte(config), this)
 	if this.MaxSize > 0 {
 		maxSize = this.MaxSize
@@ -51,14 +51,18 @@ func (this *LogFile) Init(config string) error {
 	return this.fileSize()
 }
 
-func (this *LogFile) Write(level int, msg string) {
-	this.fileSize()
+func (this *logFile) write(level int, msg string) error {
+	err := this.fileSize()
+	if err != nil {
+		return err
+	}
 	if this.Level > level {
 		this.lg.Println(msg)
 	}
+	return nil
 }
 
-func (this *LogFile) createLogFile() error {
+func (this *logFile) createLogFile() error {
 	if tools.IsNotBlank(this.FileName) {
 		fileName = this.FileName + "."
 	}
@@ -71,11 +75,14 @@ func (this *LogFile) createLogFile() error {
 	return err
 }
 
-func (this *LogFile) fileSize() error {
+func (this *logFile) fileSize() error {
 	this.mw.Lock()
 	defer this.mw.Unlock()
 	fd := this.mw.fd
-	s, _ := fd.Stat()
+	s, err := fd.Stat()
+	if err != nil {
+		return err
+	}
 	if s.Size() > maxSize {
 		err := fd.Close()
 		if err != nil {
@@ -97,5 +104,5 @@ func exist(filename string) bool {
 }
 
 func init() {
-	Register("file", NewLogFile)
+	register("file", newLogFile)
 }

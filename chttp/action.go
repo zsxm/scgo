@@ -1,5 +1,11 @@
 package chttp
 
+type curl struct {
+	permissions []string
+	mfunc       func(Context)
+	method      string
+}
+
 //设置新的action
 func Action(url string, actionMethod func(Context)) *curl {
 	if route.action == nil {

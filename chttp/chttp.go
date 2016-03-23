@@ -6,16 +6,11 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/zsxm/scgo/filter"
 	"github.com/zsxm/scgo/log"
 )
 
 type action map[string]*curl
-
-type curl struct {
-	permissions []string
-	mfunc       func(Context)
-	method      string
-}
 
 //路由
 type Route struct {
@@ -61,6 +56,12 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				c, err := this.Context(w, r)
 				if err != nil {
 					log.Info(err)
+				}
+				fc := this.FilterContext(c)
+				err = filter.Call(url, fc)
+				if err != nil {
+					log.Info(err)
+					return
 				}
 				murl.mfunc(c) //调用函数
 			}
@@ -118,6 +119,14 @@ func (*Route) isHtml(url string) bool {
 		}
 	}
 	return false
+}
+
+func (*Route) FilterContext(c Context) filter.FilterContext {
+	fc := filter.FilterContext{}
+	fc.Params = c.Params
+	fc.Request = c.Request
+	fc.Response = c.Response
+	return fc
 }
 
 //当前请求的上下文

@@ -1,7 +1,7 @@
 package logger
 
 const (
-	off = iota
+	off = 1 << iota
 	fatal
 	err
 	warn
@@ -15,8 +15,8 @@ const (
 
 var (
 	log_level = []string{"OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "ALL"}
-	path      = "logs/"
-	ext       = ".log"
-	maxSize   = int64(10240000)
-	fileName  = "log."
+	path      = "logs/"         //default logs/
+	ext       = ".log"          //default .log
+	maxSize   = int64(10485760) //default 10M
+	fileName  = "log."          //default log.
 )

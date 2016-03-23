@@ -4,7 +4,12 @@ Description
 
 golang 框架
 
-获取：go get github.com/zsxm/scgo or git clone https://github.com/zsxm/scgo.git
+获取：
+github.com
+go get github.com/zsxm/scgo 
+
+clone
+git clone https://github.com/zsxm/scgo.git
 
 简要说明：
 

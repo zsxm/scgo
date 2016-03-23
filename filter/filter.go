@@ -19,6 +19,17 @@ type FilterContext struct {
 	Params   url.Values
 }
 
+//设置头
+func (this *FilterContext) SetHeader(key, val string) {
+	this.Response.Header().Set(key, val)
+}
+
+//获取参数
+func (this *FilterContext) GetParam(key string) []string {
+	return this.Params[key]
+}
+
+//添加过滤器方法
 func Add(url string, filterMethod func(FilterContext) error) {
 	fu := &Filter{
 		url:   url,
@@ -27,6 +38,7 @@ func Add(url string, filterMethod func(FilterContext) error) {
 	furl = append(furl, fu)
 }
 
+//调用
 func Call(curl string, fc FilterContext) error {
 	for _, v := range furl {
 		if isCall(curl, v.url) {

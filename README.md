@@ -4,9 +4,11 @@ Description
 
   go get github.com/snxamdf/scgo
 
-core:
+chttp:
   action映射
   请求数据绑定和响应数据封装
+
+chttplib:
   http模拟请求发送
 
 data:
@@ -14,13 +16,13 @@ data:
   对结构的数据转换
 
 filter:
-  过滤器配置
+  过滤器
 
 logger:
   日志输出
 
 security:
-  安全控制
+  安全
 
 soap:
   webservice
@@ -32,5 +34,5 @@ tools:
   框架所有工具包
   代码生成包
   
-代码生成示例：http://git.oschina.net/snxamdf/study
+代码生成示例：http://git.oschina.net/snxamdf/study : app3
 

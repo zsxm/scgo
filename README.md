@@ -2,7 +2,7 @@
 
 Description
 
-  go get github.com/snxamdf/scgo
+  go get github.com/zsxm/scgo
 
 chttp:
   action映射

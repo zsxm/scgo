@@ -2,7 +2,11 @@
 
 Description
 
-  go get github.com/zsxm/scgo
+golang 框架
+
+获取：go get github.com/zsxm/scgo or git clone https://github.com/zsxm/scgo.git
+
+简要说明：
 
 chttp:
   action映射

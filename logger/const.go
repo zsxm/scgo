@@ -1,7 +1,7 @@
 package logger
 
 const (
-	off = 1 << iota
+	off = iota
 	fatal
 	err
 	warn

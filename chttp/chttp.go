@@ -55,22 +55,32 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			} else {
 				c, err := this.Context(w, r)
 				if err != nil {
-					log.Info(err)
+					log.Error(err)
 				}
 				fc := this.FilterContext(c)
-				err = filter.Call(url, fc)
+				err = filter.Call(url, fc) //调用过滤器
 				if err != nil {
-					log.Info(err)
+					log.Error(err)
 					return
 				}
 				murl.mfunc(c) //调用函数
+				if c.MultiFile.isUpload {
+					var src = Conf.UploadPath
+					err := c.MultiFile.Upload(src)
+					if err != nil {
+						log.Error(err)
+					}
+				}
+				if c.MultiFile.isUpload {
+					c.MultiFile.Close()
+				}
 			}
 		} else {
-			log.Info("未找到这个 URL", url, "URL 请求方式", murl.method, ",当前请求方式", r.Method)
+			log.Info("未找到 URL ", url, ",请求方式", murl.method, ",当前请求方式", r.Method)
 			this.Error404(w, r)
 		}
 	} else {
-		log.Info("未找到这个 URL", url, ",请求方式", r.Method)
+		log.Info("未找到 URL ", url, ",请求方式", r.Method)
 		this.Error404(w, r)
 	}
 }
@@ -137,22 +147,39 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 		log.Info(err)
 		return Context{}, err
 	}
+	c := Context{}
 	if r.Method == GET {
 		values = r.Form
 	} else {
-		values = r.PostForm
+		var contextType = r.Header.Get("Content-Type")
+		var isUpload bool
+		if contextType != "" {
+			if strings.Contains(contextType, "multipart/form-data") {
+				isUpload = true
+			}
+		}
+		if isUpload {
+			r.ParseMultipartForm(32 << 20) //32M
+			multiFile := &MultiFile{}
+			fileHeads := r.MultipartForm.File["file"]
+			multiFile.init(fileHeads)
+			log.Info("----------------", multiFile)
+			multiFile.isUpload = true
+			c.MultiFile = multiFile
+			values = r.Form
+		} else {
+			values = r.PostForm
+		}
 	}
-
-	c := Context{
-		Response: w,
-		Request:  r,
-		Params:   values,
-	}
+	c.Response = w
+	c.Request = r
+	c.Params = values
 	return c, nil
 }
 
 //运行服务
 func Run() {
+	Conf.Init()
 	log.Info("HTTP PROT", Conf.Port)
 	err := http.ListenAndServe(Conf.Port, route)
 	if err != nil {

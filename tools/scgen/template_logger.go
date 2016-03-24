@@ -7,7 +7,7 @@ import (
 	"github.com/zsxm/scgo/logger"
 )
 
-var loger *logger.Logger = logger.NewLogger("[{{.GenEntity.ModuleName}}]")
+var loger *logger.Log = logger.New("[{{.GenEntity.ModuleName}}]")
 
 func Debug(msg ...interface{}) {
 	loger.Debug(msg...)

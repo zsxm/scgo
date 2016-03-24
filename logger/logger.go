@@ -8,6 +8,21 @@ import (
 	"github.com/zsxm/scgo/tools/cxml"
 )
 
+var logger *Logger
+
+type Log struct {
+	modelName string
+	logger    *Logger
+}
+
+type Logger struct {
+	lock   sync.Mutex
+	level  int
+	msg    chan *msg
+	logOut map[string]LoggerInterface
+	Logger loggerXml `xml:"logger"`
+}
+
 type msg struct {
 	level int
 	msg   string
@@ -21,56 +36,16 @@ type loggerXml struct {
 	MaxSize  int64  `xml:"maxSize"`
 }
 
-type Logger struct {
-	modelName string
-	lock      sync.Mutex
-	level     int
-	msg       chan *msg
-	logOut    map[string]LoggerInterface
-	Logger    loggerXml `xml:"logger"`
-}
-
-var logger *Logger
-
-func NewLogger(modelName string) *Logger {
-	if logger == nil {
-		e := &Logger{
-			modelName: modelName,
-			level:     all,
-			msg:       make(chan *msg, 10000),
-			logOut:    make(map[string]LoggerInterface),
-		}
-		e.xmlInit()
-		if e.Logger.Console {
-			e.setOut("console", e.Logger)
-		}
-		if e.Logger.File {
-			e.setOut("file", e.Logger)
-		}
-		logger = e
-		go logger.start()
+func New(modelName string) *Log {
+	e := &Log{
+		modelName: modelName,
+		logger:    logger,
 	}
-	return logger
+	return e
 }
 
 func (this *Logger) xmlInit() error {
 	return cxml.Unmarshal(this, xml_path)
-}
-
-func (this *Logger) setOut(name string, xml loggerXml) error {
-	this.lock.Lock()
-	defer this.lock.Unlock()
-	if logOut, ok := logFuncs[name]; ok {
-		lo := logOut()
-		err := lo.init(xml)
-		if err != nil {
-			return err
-		}
-		this.logOut[name] = lo
-	} else {
-		return fmt.Errorf("Not found reg func %q (forgotten register ?)", name)
-	}
-	return nil
 }
 
 func (this *Logger) start() {
@@ -87,39 +62,61 @@ func (this *Logger) start() {
 	}
 }
 
-func (this *Logger) write(level int, v ...interface{}) {
+func (this *Log) write(level int, v ...interface{}) {
 	m := new(msg)
 	m.level = level
 	m.msg = fmt.Sprint(this.modelName, " ", log_level[level], " ", fmt.Sprint(v...))
-	this.msg <- m
+	this.logger.msg <- m
 }
 
-func (this *Logger) Debug(msg ...interface{}) {
-	if this.level >= debug {
+func (this *Log) Debug(msg ...interface{}) {
+	if this.logger.level >= debug {
 		this.write(debug, msg...)
 	}
 }
 
-func (this *Logger) Info(msg ...interface{}) {
-	if this.level >= info {
+func (this *Log) Info(msg ...interface{}) {
+	if this.logger.level >= info {
 		this.write(info, msg...)
 	}
 }
 
-func (this *Logger) Warn(msg ...interface{}) {
-	if this.level >= warn {
+func (this *Log) Warn(msg ...interface{}) {
+	if this.logger.level >= warn {
 		this.write(warn, msg...)
 	}
 }
 
-func (this *Logger) Error(msg ...interface{}) {
-	if this.level >= err {
+func (this *Log) Error(msg ...interface{}) {
+	if this.logger.level >= err {
 		this.write(err, msg...)
 	}
 }
 
-func (this *Logger) Fatal(msg ...interface{}) {
-	if this.level >= fatal {
+func (this *Log) Fatal(msg ...interface{}) {
+	if this.logger.level >= fatal {
 		this.write(fatal, msg...)
 	}
+}
+
+func init() {
+	loggerImpl := make(map[string]LoggerInterface)
+	e := &Logger{
+		level: all,
+		msg:   make(chan *msg, 10240),
+	}
+	e.xmlInit()
+	if e.Logger.Console {
+		cons := newConsole()
+		cons.init(e.Logger)
+		loggerImpl["console"] = cons
+	}
+	if e.Logger.File {
+		fl := newLogFile()
+		fl.init(e.Logger)
+		loggerImpl["file"] = fl
+	}
+	e.logOut = loggerImpl
+	go e.start()
+	logger = e
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/zsxm/scgo/logger"
 )
 
-var loger *logger.Logger = logger.NewLogger("[ZSXM-SCGO]")
+var loger *logger.Log = logger.New("[ZSXM-SCGO]")
 
 func Debug(msg ...interface{}) {
 	loger.Debug(msg...)

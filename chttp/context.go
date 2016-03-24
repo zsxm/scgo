@@ -27,9 +27,10 @@ var temp = template.Template{}
 
 //当前请求的上下文
 type Context struct {
-	Response http.ResponseWriter
-	Request  *http.Request
-	Params   url.Values
+	Response  http.ResponseWriter
+	Request   *http.Request
+	Params    url.Values
+	MultiFile *MultiFile
 }
 
 func (this *Context) SetHeader(key, val string) {

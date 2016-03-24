@@ -4,15 +4,20 @@ package chttp
 var Conf *Config
 
 type Config struct {
-	Static    Mapping   //静态文件 url 映射css、js、image
-	Html      Mapping   //html文件 url 映射
-	Port      string    //服务商品
-	Error404  ErrorPage //404错误页面
-	Error500  ErrorPage //500错误页面
-	Template  Template  //html模版
-	Icon      Icon      //icon
-	Debug     bool      //启动模式
-	DBCfgPath string    //数据库配置文件路径
+	Static     Mapping   //静态文件 url 映射css、js、image
+	Html       Mapping   //html文件 url 映射
+	Port       string    //服务商品
+	Error404   ErrorPage //404错误页面
+	Error500   ErrorPage //500错误页面
+	Template   Template  //html模版
+	Icon       Icon      //icon
+	Debug      bool      //启动模式
+	DBCfgPath  string    //数据库配置文件路径
+	UploadPath string    "upload" //上传文件目录 upload
+}
+
+func (this *Config) Init() {
+	this.UploadPath = "upload"
 }
 
 type Mapping struct {
@@ -22,8 +27,8 @@ type Mapping struct {
 }
 
 type ErrorPage struct {
-	Url     string "" //页面路径
-	Message string "" //返回错误信息
+	Url     string `` //页面路径
+	Message string `` //返回错误信息
 }
 
 type Icon struct {

@@ -29,7 +29,3 @@ func (this *console) write(level int, msg string) error {
 	}
 	return nil
 }
-
-func init() {
-	register("console", newConsole)
-}

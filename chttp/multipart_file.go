@@ -31,20 +31,20 @@ func (this *MultiFile) init(fileHeads []*multipart.FileHeader) {
 	this.FileName = make([]string, 0, size)
 	this.Size = make([]int64, 0, size)
 	this.FileNameId = make([]string, 0, size)
-	for i := 0; i < size; i++ {
-		fileHead := fileHeads[i]
+	for _, fileHead := range fileHeads {
 		file, err := fileHead.Open()
 		if err != nil {
 			log.Error(err)
 			break
 		}
+		this.File = append(this.File, file)
+		this.FileName = append(this.FileName, fileHead.Filename)
 		if s, ok := file.(Size); ok {
 			this.SumSize += s.Size()
-			this.Size[i] = s.Size()
+			this.Size = append(this.Size, s.Size())
 		}
-		this.File[i] = file
-		this.FileName[i] = fileHead.Filename
 	}
+
 }
 
 //关闭文件
@@ -72,12 +72,14 @@ func (this *MultiFile) Upload(src string) error {
 			}
 		}
 		for i, file := range this.File {
-			index := strings.LastIndex(this.FileName[i], ".")
+			fileName := this.FileName[i]
+			index := strings.LastIndex(fileName, ".")
 			if index != -1 {
-				ext = this.FileName[i][index:]
+				ext = fileName[index:]
 			}
-			this.FileNameId[i] = uuid.NewV1().String() + ext
-			fileName := src + "/" + this.FileNameId[i]
+			fileNameId := uuid.NewV1().String() + ext
+			this.FileNameId = append(this.FileNameId, fileNameId)
+			fileName = src + "/" + fileNameId
 			defer file.Close()
 			buf, err := ioutil.ReadAll(file)
 			if err != nil {

@@ -64,14 +64,12 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				murl.mfunc(c) //调用函数
-				if c.MultiFile.isUpload {
+				if c.MultiFile != nil && c.MultiFile.isUpload {
 					var src = Conf.UploadPath
 					err := c.MultiFile.Upload(src)
 					if err != nil {
 						log.Error(err)
 					}
-				}
-				if c.MultiFile.isUpload {
 					c.MultiFile.Close()
 				}
 			}
@@ -163,7 +161,6 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 			multiFile := &MultiFile{}
 			fileHeads := r.MultipartForm.File["file"]
 			multiFile.init(fileHeads)
-			log.Info("----------------", multiFile)
 			multiFile.isUpload = true
 			c.MultiFile = multiFile
 			values = r.Form

@@ -23,6 +23,32 @@ projectDir<br/>
 \-----------------------action<br/>
 \-----------------------log<br/>
 \-----------------------service<br/>
+以下目录说明<br/>
+projectDir：项目，source：go源码,module1：模块,entity：结构实体,结构实体目录需要按照一定格式编写<br/>
+entity.go示例代码<br/>
+import (
+	"github.com/zsxm/scgo/data"
+)
+
+//go:generate $GOPATH/src/github.com/zsxm/scgo/tools/scgen/scgen.exe -fileDir=$GOFILE -projectDir=study/app3 -moduleName=chatol -goSource=source
+//go:@Table value=users
+type Message struct {
+
+	//go:@Column value=u_id
+	//go:@Identif
+	id data.String
+
+	//go:@Column value=u_name
+	name data.String
+
+	//go:@Column value=u_phone
+	phone data.String
+
+	//go:@Column value=u_age
+	age data.Integer
+
+	tt data.Integer
+}
 
 <br/>
 chttp:<br/>

@@ -26,12 +26,11 @@ projectDir<br/>
 以下目录说明<br/>
 projectDir：项目，source：go源码,module1：模块,entity：结构实体,结构实体目录需要按照一定格式编写<br/>
 entity.go示例代码<br/>
-`
-import (
-	"github.com/zsxm/scgo/data"
-)
+`import (`
+`	"github.com/zsxm/scgo/data"`
+`)`
 
-//go:generate $GOPATH/src/github.com/zsxm/scgo/tools/scgen/scgen.exe -fileDir=$GOFILE -projectDir=study/app3 -moduleName=chatol -goSource=source
+`//go:generate $GOPATH/src/github.com/zsxm/scgo/tools/scgen/scgen.exe -fileDir=$GOFILE -projectDir=study/app3 -moduleName=chatol` `-goSource=source`
 //go:@Table value=users
 type Message struct {
 

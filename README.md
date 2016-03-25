@@ -43,6 +43,7 @@ entity.go示例代码<br/>
 `//go:generate $GOPATH/src/github.com/zsxm/scgo/tools/scgen/scgen.exe -fileDir=$GOFILE -projectDir=study/app3 -moduleName=chatol` `-goSource=source`<br/>
 `//go:@Table value=users`<br/>
 `type Message struct {`
+
 	//go:@Column value=u_id
 	//go:@Identif
 	id data.String
@@ -94,13 +95,13 @@ filter:<br/>
 logger:<br/>
   *日志输出<br/>
 
-security:<br/>
+security:还未实现<br/>
   *安全<br/>
 
-soap:<br/>
+soap: 还未实现<br/>
   *webservice<br/>
 
-template:<br/>
+template:没有什么可实现的<br/>
   *模版转换<br/>
 
 tools:<br/>

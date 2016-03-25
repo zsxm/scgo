@@ -1,10 +1,11 @@
 # scgo golang 框架
 
-获取方式：<br/>
-github.com<br/>
-go get github.com/zsxm/scgo<br/>
-clone<br/>
-git clone https://github.com/zsxm/scgo.git
+#获取方式：<br/>
+##github.com<br/>
+###go get github.com/zsxm/scgo<br/>
+--------
+##clone<br/>
+###git clone https://github.com/zsxm/scgo.git
 --------
 
 ##简单说明：<br/>

@@ -43,7 +43,6 @@ entity.go示例代码<br/>
 `//go:generate $GOPATH/src/github.com/zsxm/scgo/tools/scgen/scgen.exe -fileDir=$GOFILE -projectDir=study/app3 -moduleName=chatol` `-goSource=source`<br/>
 `//go:@Table value=users`<br/>
 `type Message struct {`
-
 	//go:@Column value=u_id
 	//go:@Identif
 	id data.String

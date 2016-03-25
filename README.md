@@ -49,6 +49,15 @@ entity.go示例代码<br/>
 
 	tt data.Integer
 `}`
+需要配置环境变量GOPATH,不然也得配置<br/>
+-projectDir和-moduleName是需要配置的项目目录和模块名称,其它两个不变<br/>
+还需要一个.bat或.sh执行文件放到entity.go同一目录下<br/>
+执行文件代码<br/>
+`@echo off`<br/>
+`echo [INFO] run go generate.`<br/>
+`cd %~dp0`<br/>
+`call go generate`<br/>
+`exit`<br/>
 
 <br/>
 chttp:<br/>

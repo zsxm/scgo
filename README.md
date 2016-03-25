@@ -9,6 +9,10 @@
 ##简单说明：<br/>
 为了方便使用，执行速度，和开发效率，所有反射的功能都由生成的代码替代<br/>
 代码生成：github.com/zsxm/scgo/tools/scgen/scgen.exe 代码生成工具包<br/>
+生成工具使用方式：<br/>
+在实际项目结构中
+projectDir
+\----source
 
 <br/>
 chttp:<br/>

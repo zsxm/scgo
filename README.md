@@ -13,9 +13,9 @@ git clone https://github.com/zsxm/scgo.git<br/>
 实际项目目录结构,逗号后边的是目录说明<br/>
 
 \--projectDir<br/>
-\--------conf ，配置文件,配置db.xml,logger.xml,route.conf.xml,这些文件名是固定的.文件内容去示例中找<br/>
+\--------conf ，配置文件,配置db.xml,logger.xml这些文件名是固定的.文件内容示例去框架使用示例中找<br/>
 \--------logs ，生成的日志<br/>
-\--------init ，加载目录，可有可无,执行action的init方法<br/>
+\--------init ，初始化action,执行action.go的init方法<br/>
 \--------static ，静态文件存放<br/>
 \--------template ，html模版存放<br/>
 \--------upload ，上传文件存放，可配置<br/>

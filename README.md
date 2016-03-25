@@ -31,7 +31,7 @@ entity.go示例代码<br/>
 `)`
 
 `//go:generate $GOPATH/src/github.com/zsxm/scgo/tools/scgen/scgen.exe -fileDir=$GOFILE -projectDir=study/app3 -moduleName=chatol` `-goSource=source`
-//go:@Table value=users
+`//go:@Table value=users`
 type Message struct {
 
 	//go:@Column value=u_id
@@ -48,8 +48,7 @@ type Message struct {
 	age data.Integer
 
 	tt data.Integer
-}
-`
+`}`
 
 <br/>
 chttp:<br/>

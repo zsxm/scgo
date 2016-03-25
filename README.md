@@ -6,12 +6,19 @@ go get github.com/zsxm/scgo<br/>
 clone<br/>
 git clone https://github.com/zsxm/scgo.git<br/>
 
-#简单说明：<br/>
+#使用方法和说明：<br/>
 为了方便使用，执行速度，和开发效率，所有反射的功能都由生成的代码替代<br/>
 代码生成：github.com/zsxm/scgo/tools/scgen/scgen.exe 代码生成工具包<br/>
 生成工具使用方式：<br/>
 在实际项目目录结构中<br/>
 projectDir<br/>
+\--------conf,配置文件目录,配置db.xml,logger.xml,route.conf.xml,这些文件名是固定的.<br/>
+\--------logs,生成的日志目录<br/>
+\--------init,加载目录，可有可无,执行action的init方法<br/>
+\--------static,静态文件存放目录<br/>
+\--------template,html模版存放目录<br/>
+\--------upload,上传文件存放目录，可配置<br/>
+\--------main.go,程序启动<br/>
 \--------source<br/>
 \----------------module1<br/>
 \-----------------------entity<br/>
@@ -23,6 +30,7 @@ projectDir<br/>
 \-----------------------action<br/>
 \-----------------------log<br/>
 \-----------------------service<br/>
+#框架使用示例在最下边<br/>
 以下目录说明<br/>
 projectDir：项目，source：go源码,module1：模块,entity：结构实体,结构实体目录需要按照一定格式编写<br/>
 entity.go示例代码<br/>

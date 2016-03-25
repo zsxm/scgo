@@ -7,7 +7,10 @@
 *git clone https://github.com/zsxm/scgo.git<br/>
 
 ##简单说明：<br/>
+为了方便使用，执行速度，和开发效率，所有反射的功能都由生成的代码替代<br/>
+代码生成：github.com/zsxm/scgo/tools/scgen/scgen.exe 代码生成工具包<br/>
 
+<br/>
 chttp:<br/>
   *action映射<br/>
   *请求数据绑定和响应数据封装<br/>

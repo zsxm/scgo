@@ -1,5 +1,4 @@
-# scgo
-golang 框架
+# scgo golang 框架
 ==========
 
 获取方式：

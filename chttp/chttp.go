@@ -36,10 +36,16 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 	url := r.URL.String()
-	//log.Println("--------- ", url, this.action)
+
 	ix := strings.Index(url, "?")
 	if ix > 0 {
 		url = url[0:ix]
+	}
+	if url == "/" {
+		if this.isHtml(Conf.Welcome) {
+			htmlRoute.init(w, r)
+			return
+		}
 	}
 	if this.isStatic(url) { //*.js、*.css、image等静态文件
 		staticRoute.init(w, r)
@@ -74,12 +80,16 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		} else {
-			log.Info("未找到 URL ", url, ",请求方式", murl.method, ",当前请求方式", r.Method)
-			this.Error404(w, r)
+			if url != "/favicon.ico" {
+				log.Info("未找到 URL ", url, ",请求方式", murl.method, ",当前请求方式", r.Method)
+				this.Error404(w, r)
+			}
 		}
 	} else {
-		log.Info("未找到 URL ", url, ",请求方式", r.Method)
-		this.Error404(w, r)
+		if url != "/favicon.ico" {
+			log.Info("未找到 URL ", url, ",请求方式", r.Method)
+			this.Error404(w, r)
+		}
 	}
 }
 

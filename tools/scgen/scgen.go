@@ -68,6 +68,7 @@ func main() {
 		annot.ToField(fields) //获得field信息
 		//orm.ToOrm(fields)      //orm
 	}
+
 	//生成entity impl
 	genEntity(strings.ToLower(annot.Name)+"_entity_impl.go", annot)
 	//生成Action

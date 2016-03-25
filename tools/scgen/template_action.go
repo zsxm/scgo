@@ -5,11 +5,11 @@ package action
 
 import (
 	"github.com/zsxm/scgo/chttp"
-	"{{.GenEntity.ProjectDir}}/{{.GenEntity.GoSourceDir}}/{{.GenEntity.ModuleName}}/entity"
+	"{{.GenEntity.ProjectDir}}/{{.GenEntity.GoSourceDir}}{{if isNotBlank .GenEntity.ModuleName}}/{{.GenEntity.ModuleName}}{{end}}/entity"
 )
 
 func init() {
-	chttp.Action("/{{.GenEntity.ModuleName}}/index", index).Get()
+	chttp.Action("{{if isNotBlank .GenEntity.ModuleName}}/{{.GenEntity.ModuleName}}{{end}}/index", index).Get()
 }
 
 //gen

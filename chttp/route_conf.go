@@ -13,11 +13,17 @@ type Config struct {
 	Icon       Icon      //icon
 	Debug      bool      //启动模式
 	DBCfgPath  string    //数据库配置文件路径
-	UploadPath string    "upload" //上传文件目录 upload
+	UploadPath string    //上传文件目录 默认值 upload
+	Welcome    string    //默认首页 默认值 /index.html
 }
 
 func (this *Config) Init() {
-	this.UploadPath = "upload"
+	if this.UploadPath == "" {
+		this.UploadPath = "upload"
+	}
+	if this.Welcome == "" {
+		this.Welcome = "/index.html"
+	}
 }
 
 type Mapping struct {

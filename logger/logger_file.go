@@ -87,7 +87,11 @@ func (this *logFile) fileSize() error {
 		return err
 	}
 	if s.Size() > this.maxSize {
-		err := fd.Close()
+		err = fd.Sync()
+		if err != nil {
+			return err
+		}
+		err = fd.Close()
 		if err != nil {
 			return err
 		}

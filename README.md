@@ -11,8 +11,8 @@
 代码生成：github.com/zsxm/scgo/tools/scgen/scgen.exe 代码生成工具包<br/>
 生成工具使用方式：<br/>
 在实际项目结构中
-projectDir
-\----source
+projectDir<br/>
+\----source<br/>
 
 <br/>
 chttp:<br/>

@@ -106,5 +106,5 @@ tools:<br/>
   *框架所有工具包<br/>
   *代码生成包<br/>
 
-##代码生成示例：http://git.oschina.net/snxamdf/study : app3
+##框架使用的示例，示例在app3项目中，自己摸索：http://git.oschina.net/snxamdf/study
 

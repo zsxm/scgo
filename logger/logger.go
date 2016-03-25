@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"fmt"
+	gofmt "fmt"
 	"log"
 	"sync"
 
@@ -25,7 +25,7 @@ type Logger struct {
 
 type msg struct {
 	level int
-	msg   string
+	msg   []interface{}
 }
 
 type loggerXml struct {
@@ -53,7 +53,7 @@ func (this *Logger) start() {
 		select {
 		case m := <-this.msg:
 			for _, v := range this.logOut {
-				err := v.write(m.level, m.msg)
+				err := v.write(m.level, m.msg...)
 				if err != nil {
 					log.Println(err)
 				}
@@ -65,7 +65,16 @@ func (this *Logger) start() {
 func (this *Log) write(level int, v ...interface{}) {
 	m := new(msg)
 	m.level = level
-	m.msg = fmt.Sprint(this.modelName, " ", log_level[level], " ", fmt.Sprint(v...))
+	m.msg = append(m.msg, this.modelName, log_level[level])
+	m.msg = append(m.msg, v...)
+	this.logger.msg <- m
+}
+
+func (this *Log) writef(level int, fmt string, v ...interface{}) {
+	m := new(msg)
+	m.level = level
+	m.msg = append(m.msg, this.modelName, log_level[level])
+	m.msg = append(m.msg, gofmt.Sprintf(fmt, v...))
 	this.logger.msg <- m
 }
 
@@ -96,6 +105,18 @@ func (this *Log) Error(msg ...interface{}) {
 func (this *Log) Fatal(msg ...interface{}) {
 	if this.logger.level >= fatal {
 		this.write(fatal, msg...)
+	}
+}
+
+func (this *Log) Printf(fmt string, msg ...interface{}) {
+	if this.logger.level >= info {
+		this.writef(info, fmt, msg...)
+	}
+}
+
+func (this *Log) Println(msg ...interface{}) {
+	if this.logger.level >= info {
+		this.write(info, msg...)
 	}
 }
 

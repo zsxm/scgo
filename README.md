@@ -1,50 +1,48 @@
 # scgo
-
-Description
-
 golang 框架
+==========
 
 获取方式：
-
+--------
 github.com
-
+--------
 go get github.com/zsxm/scgo
 
 clone
-
+--------
 git clone https://github.com/zsxm/scgo.git
 
 简单说明：
+==========
+chttp:\<br/>
+  action映射\<br/>
+  请求数据绑定和响应数据封装\<br/>
 
-chttp:
-  action映射
-  请求数据绑定和响应数据封装
+chttplib:\<br/>
+  http模拟请求发送\<br/>
 
-chttplib:
-  http模拟请求发送
+data:\<br/>
+  数据库、缓存操作封装\<br/>
+  对结构的数据转换\<br/>
 
-data:
-  数据库、缓存操作封装
-  对结构的数据转换
+filter:\<br/>
+  过滤器\<br/>
 
-filter:
-  过滤器
+logger:\<br/>
+  日志输出\<br/>
 
-logger:
-  日志输出
+security:\<br/>
+  安全\<br/>
 
-security:
-  安全
+soap:\<br/>
+  webservice\<br/>
 
-soap:
-  webservice
+template:\<br/>
+  模版转换\<br/>
 
-template:
-  模版转换
+tools:\<br/>
+  框架所有工具包\<br/>
+  代码生成包\<br/>
 
-tools:
-  框架所有工具包
-  代码生成包
-  
 代码生成示例：http://git.oschina.net/snxamdf/study : app3
-
+--------

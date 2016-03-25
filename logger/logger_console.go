@@ -23,9 +23,9 @@ func (this *console) init(xml loggerXml) error {
 	return nil
 }
 
-func (this *console) write(level int, msg string) error {
+func (this *console) write(level int, msg ...interface{}) error {
 	if this.level >= level {
-		log.Println(msg)
+		log.Println(msg...)
 	}
 	return nil
 }

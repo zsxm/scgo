@@ -28,4 +28,12 @@ func Error(msg ...interface{}) {
 func Fatal(msg ...interface{}) {
 	loger.Fatal(msg...)
 }
+
+func Printf(fmt string, msg ...interface{}) {
+	loger.Printf(fmt, msg...)
+}
+
+func Println(msg ...interface{}) {
+	loger.Println(msg...)
+}
 `

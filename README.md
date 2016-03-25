@@ -1,5 +1,4 @@
 # scgo golang 框架
-==========
 
 获取方式：
 --------
@@ -43,5 +42,5 @@ tools:<br/>
   框架所有工具包<br/>
   代码生成包<br/>
 
-代码生成示例：http://git.oschina.net/snxamdf/study : app3
---------
+##代码生成示例：http://git.oschina.net/snxamdf/study : app3
+

@@ -2,13 +2,13 @@
 
 获取方式：<br/>
 github.com<br/>
-go get github.com/zsxm/scgo<br/>
+`go get github.com/zsxm/scgo`<br/>
 clone<br/>
-git clone https://github.com/zsxm/scgo.git<br/>
+`git clone https://github.com/zsxm/scgo.git`<br/>
 
 #使用方法和说明：<br/>
 为了方便使用，执行速度，和开发效率，所有反射的功能都由生成的代码替代<br/>
-代码生成：github.com/zsxm/scgo/tools/scgen/scgen.exe 代码生成工具包<br/>
+代码生成：`github.com/zsxm/scgo/tools/scgen/scgen.exe` 代码生成工具包<br/>
 生成工具使用方式：<br/>
 实际项目目录结构,逗号后边的是目录说明<br/>
 
@@ -61,12 +61,12 @@ entity.go示例代码<br/>
 `}`<br/>
 注解说明：<br/>
 因为go不支持注解，所以都是以注释形式存在的自定义注解<br/>
-固定格式//go:开头<br/>
-//go:@Table、//go:@Column、//go:@Identif，分别是结构Message对应的表名,字段对应的列名，和主键字段，目前只支持这些。<br/>
+固定格式`//go:`开头<br/>
+`//go:@Table、//go:@Column、//go:@Identif`，分别是结构Message对应的表名,字段对应的列名，和主键字段，目前只支持这些。<br/>
 未添加注解的字段是不会映射到数据表中，但是会自动封装数据进去，除了数据表映射功能。
 <br/>
-注意：需要配置环境变量GOPATH<br/>
--projectDir和-moduleName是需要配置的项目目录和模块名称,其它两个不变<br/>
+注意：需要配置环境变量`GOPATH`<br/>
+`-projectDir`和`-moduleName`是需要配置的项目目录和模块名称,其它两个不变<br/>
 还需要一个.bat或.sh执行文件放到entity.go同一目录下<br/>
 执行文件代码<br/>
 `@echo off`<br/>

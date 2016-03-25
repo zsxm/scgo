@@ -10,24 +10,24 @@ git clone https://github.com/zsxm/scgo.git<br/>
 为了方便使用，执行速度，和开发效率，所有反射的功能都由生成的代码替代<br/>
 代码生成：github.com/zsxm/scgo/tools/scgen/scgen.exe 代码生成工具包<br/>
 生成工具使用方式：<br/>
-在实际项目目录结构中<br/>
-逗号后边的是目录说明<br/>
+实际项目目录结构,逗号后边的是目录说明<br/>
+
 \--projectDir<br/>
-\--------conf ,配置文件,配置db.xml,logger.xml,route.conf.xml,这些文件名是固定的.文件内容去示例中找<br/>
-\--------logs ,生成的日志<br/>
-\--------init ,加载目录，可有可无,执行action的init方法<br/>
-\--------static ,静态文件存放<br/>
-\--------template ,html模版存放<br/>
-\--------upload ,上传文件存放，可配置<br/>
-\--------main.go ,程序启动<br/>
-\--------source ,go源代码目录<br/>
-\----------------module1 ,模块1<br/>
-\-----------------------entity ,结构实体<br/>
-\------------------------------entity.go ,go文件<br/>
+\--------conf ，配置文件,配置db.xml,logger.xml,route.conf.xml,这些文件名是固定的.文件内容去示例中找<br/>
+\--------logs ，生成的日志<br/>
+\--------init ，加载目录，可有可无,执行action的init方法<br/>
+\--------static ，静态文件存放<br/>
+\--------template ，html模版存放<br/>
+\--------upload ，上传文件存放，可配置<br/>
+\--------main.go ，程序启动<br/>
+\--------source ，go源代码目录<br/>
+\----------------module1 ，模块1<br/>
+\-----------------------entity ，结构实体<br/>
+\------------------------------entity.go ，go文件<br/>
 \-----------------------action<br/>
 \-----------------------log<br/>
 \-----------------------service<br/>
-\----------------module2 ,模块2<br/>
+\----------------module2 ，模块2<br/>
 \-----------------------entity<br/>
 \-----------------------action<br/>
 \-----------------------log<br/>

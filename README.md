@@ -1,17 +1,14 @@
 # scgo golang 框架
 
-获取方式：
---------
-github.com
---------
-go get github.com/zsxm/scgo
-
-clone
---------
+获取方式：<br/>
+github.com<br/>
+go get github.com/zsxm/scgo<br/>
+clone<br/>
 git clone https://github.com/zsxm/scgo.git
+--------
 
-简单说明：
-==========
+##简单说明：<br/>
+
 chttp:<br/>
   action映射<br/>
   请求数据绑定和响应数据封装<br/>

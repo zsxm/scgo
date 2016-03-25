@@ -30,8 +30,8 @@ entity.go示例代码<br/>
 `	"github.com/zsxm/scgo/data"`
 `)`
 
-`//go:generate $GOPATH/src/github.com/zsxm/scgo/tools/scgen/scgen.exe -fileDir=$GOFILE -projectDir=study/app3 -moduleName=chatol` `-goSource=source`
-`//go:@Table value=users`
+`//go:generate $GOPATH/src/github.com/zsxm/scgo/tools/scgen/scgen.exe -fileDir=$GOFILE -projectDir=study/app3 -moduleName=chatol` `-goSource=source`<br/>
+`//go:@Table value=users`<br/>
 type Message struct {
 
 	//go:@Column value=u_id

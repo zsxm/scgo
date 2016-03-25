@@ -48,8 +48,14 @@ entity.go示例代码<br/>
 	age data.Integer
 
 	tt data.Integer
-`}`
-需要配置环境变量GOPATH,不然也得配置<br/>
+`}`<br/>
+注解说明：<br/>
+因为go不支持注解，所以都是以注释形式存在的自定义注解<br/>
+固定格式//go:开头<br/>
+//go:@Table、//go:@Column、//go:@Identif，分别是结构Message对应的表名,字段对应的列名，和主键字段，目前只支持这些。<br/>
+未添加注解的字段是不会映射到数据表中，但是会自动封装数据进去，除了数据表映射功能。
+<br/>
+注意：需要配置环境变量GOPATH<br/>
 -projectDir和-moduleName是需要配置的项目目录和模块名称,其它两个不变<br/>
 还需要一个.bat或.sh执行文件放到entity.go同一目录下<br/>
 执行文件代码<br/>
@@ -58,7 +64,8 @@ entity.go示例代码<br/>
 `cd %~dp0`<br/>
 `call go generate`<br/>
 `exit`<br/>
-
+执行该命令后，将会自动生成,action,log,service,和entity_impl.go等封装好的代码。<br/>
+自动生成的代码后缀带\_impl的文件内容是一搬不需要改动的，如果改动了，再去执行该命令将会覆盖掉自己写的代码，所以在其它文件中实现。<br/>
 <br/>
 chttp:<br/>
   *action映射<br/>

@@ -80,14 +80,15 @@ entity.go示例代码<br/>
 chttp:<br/>
   *action映射<br/>
   *请求数据绑定和响应数据封装<br/>
+  *上传文件的封装等web核心功能<br/>
 
 chttplib:<br/>
   *http模拟请求发送<br/>
-  *文件上传等<br/>
+  *文件上传发送等<br/>
 
 data:<br/>
   *数据库、缓存操作封装<br/>
-  *对结构的数据转换<br/>
+  *对结构的数据转换，数据库操作核心功能<br/>
 
 filter:<br/>
   *过滤器<br/>

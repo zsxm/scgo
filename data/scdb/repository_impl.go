@@ -3,6 +3,8 @@ package scdb
 import (
 	"database/sql"
 
+	"errors"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/zsxm/scgo/data"
 	"github.com/zsxm/scgo/data/dbconfig"
@@ -110,7 +112,14 @@ func (this *Repository) SaveOrUpdate(entity data.EntityInterface) (sql.Result, e
 	}
 }
 
-func (this *Repository) Delete(entity data.EntityInterface) (sql.Result, error) {
+func (this *Repository) Delete(entity data.EntityInterface, deleted ...bool) (sql.Result, error) {
+	if len(deleted) > 0 && deleted[0] { //逻辑删除
+		if entity.Field("deleted") == nil {
+			return nil, errors.New("逻辑删除需要有 deleted 字段")
+		}
+		entity.SetValue("deleted", "1")
+		return this.Update(entity)
+	}
 	table := entity.Table()
 	csql := scsql.SCSQL{DataBaseType: this.dBSource.DataBaseType(), Table: table, S_TYPE: scsql.SC_D, Entity: entity}
 	err := csql.ParseSQL()

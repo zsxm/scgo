@@ -32,7 +32,7 @@ type RepositoryInterface interface {
 	SelectOne(entity data.EntityInterface) error
 
 	//删除,参数 : entity data.EntityInterface
-	Delete(entity data.EntityInterface) (sql.Result, error)
+	Delete(entity data.EntityInterface, deleted ...bool) (sql.Result, error)
 
 	//执行自定义DML语言. (DDL,DCL待添加)
 	Execute(sql string, args ...interface{})

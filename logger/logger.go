@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/zsxm/scgo/tools/cxml"
+	"github.com/zsxm/scgo/cxml"
 )
 
 var logger *Logger
@@ -45,7 +45,7 @@ func New(modelName string) *Log {
 }
 
 func (this *Logger) xmlInit() error {
-	return cxml.Unmarshal(this, xml_path)
+	return cxml.UnmarshalConfig(this, xml_path)
 }
 
 func (this *Logger) start() {

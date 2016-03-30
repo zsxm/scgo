@@ -33,6 +33,10 @@ func NowUnix() int64 {
 	return time.Now().Unix()
 }
 
+func NowUnixDuration() time.Duration {
+	return time.Duration(time.Now().Unix())
+}
+
 func NowUnixStr() string {
 	return strconv.FormatInt(NowUnix(), 10)
 }

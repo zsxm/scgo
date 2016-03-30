@@ -36,7 +36,6 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 	url := r.URL.String()
-
 	ix := strings.Index(url, "?")
 	if ix > 0 {
 		url = url[0:ix]
@@ -176,8 +175,12 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 			values = r.Form
 		} else {
 			values = r.PostForm
+			if len(values) == 0 {
+				values = r.Form
+			}
 		}
 	}
+	c.Method = r.Method
 	c.Response = w
 	c.Request = r
 	c.Params = values

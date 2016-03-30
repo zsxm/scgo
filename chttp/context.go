@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -31,6 +32,7 @@ type Context struct {
 	Request   *http.Request
 	Params    url.Values
 	MultiFile *MultiFile
+	Method    string
 }
 
 func (this *Context) SetHeader(key, val string) {
@@ -38,8 +40,17 @@ func (this *Context) SetHeader(key, val string) {
 }
 
 //获取参数
-func (this *Context) GetParam(key string) []string {
+func (this *Context) GetParams(key string) []string {
 	return this.Params[key]
+}
+
+//获取参数
+func (this *Context) GetParam(key string) string {
+	v := this.Params[key]
+	if len(v) > 0 {
+		return v[0]
+	}
+	return ""
 }
 
 //绑定实体数据
@@ -322,17 +333,29 @@ func (this *Context) Cookie(name string, value string, others ...interface{}) {
 	this.SetHeader("Set-Cookie", b.String())
 }
 
+//write
+func (c *Context) Write(v []byte) (int, error) {
+	return c.Response.Write(v)
+}
+
+//read body
+func (c *Context) ReadBody() ([]byte, error) {
+	body := c.Request.Body
+	defer body.Close()
+	return ioutil.ReadAll(body)
+}
+
 //Page
 func (c *Context) Page() *data.Page {
 	page := &data.Page{}
 	var pageNo, pageSize int
-	if len(c.GetParam("pageNo")) > 0 {
-		pageNo = tools.ParseInteger(c.GetParam("pageNo")[0])
+	if len(c.GetParams("pageNo")) > 0 {
+		pageNo = tools.ParseInteger(c.GetParams("pageNo")[0])
 	} else {
 		pageNo = 1
 	}
-	if len(c.GetParam("pageSize")) > 0 {
-		pageSize = tools.ParseInteger(c.GetParam("pageSize")[0])
+	if len(c.GetParams("pageSize")) > 0 {
+		pageSize = tools.ParseInteger(c.GetParams("pageSize")[0])
 	} else {
 		pageSize = 10
 	}

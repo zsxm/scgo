@@ -190,7 +190,8 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 //运行服务
 func Run() {
 	Conf.Init()
-	log.Info("HTTP PROT", Conf.Port)
+	Init()
+	log.Info("HTTP PROT", Conf.Port, "[ok]")
 	err := http.ListenAndServe(Conf.Port, route)
 	if err != nil {
 		log.Info(err)

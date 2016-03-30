@@ -42,5 +42,11 @@ type Icon struct {
 }
 
 type Template struct {
-	Dir string "template" //模版所在根目录
+	Dir     string  "template" //模版所在根目录
+	Include Include //引入的模版配置
+}
+
+type Include struct {
+	Files []string //包含的模版文件名称
+	Dir   string   //所在目录
 }

@@ -24,8 +24,6 @@ const (
 	TEMP_SUFFIX = ".html"
 )
 
-var temp = template.Template{}
-
 //当前请求的上下文
 type Context struct {
 	Response  http.ResponseWriter
@@ -70,8 +68,12 @@ func (this *Context) BindData(entity data.EntityInterface) {
 	}
 }
 
+var temp *template.Template
+var filesnames []string
+
 //跳转html模版页面
 func (this *Context) HTML(name string, datas interface{}) {
+	var err error
 	defer func() {
 		if err := recover(); err != nil {
 			if Conf.Debug {
@@ -81,13 +83,24 @@ func (this *Context) HTML(name string, datas interface{}) {
 			}
 		}
 	}()
-	t, err := template.ParseFiles(Conf.Template.Dir + name + TEMP_SUFFIX)
+
+	//	icod := &Conf.Template.Include
+	//	if len(files) == 0 && len(icod.Files) > 0 {
+	//		log.Info("parse include template. size", len(icod.Files))
+	//		files = make([]string, 0, len(icod.Files))
+	//		for _, v := range icod.Files {
+	//			files = append(files, (Conf.Template.Dir + "/" + icod.Dir + "/" + v + TEMP_SUFFIX))
+	//		}
+	//	}
+
+	//	t, err := template.ParseFiles(Conf.Template.Dir + name + TEMP_SUFFIX)
+	//	t, err = t.ParseFiles(filesnames...)
+
 	if err != nil {
 		log.Info(err)
 	}
-	//this.SetHeader("Content-Type", "application/html; charset=utf-8")
 	dtam := dataToArrayMap(datas)
-	err = t.Execute(this.Response, dtam)
+	err = temp.ExecuteTemplate(this.Response, name+TEMP_SUFFIX, dtam)
 	if err != nil {
 		http.Error(this.Response, err.Error(), http.StatusInternalServerError)
 	}
@@ -361,4 +374,18 @@ func (c *Context) Page() *data.Page {
 	}
 	page.New(pageNo, pageSize)
 	return page
+}
+
+func Init() {
+	var err error
+	path, err := tools.CurrentDir()
+	if err != nil {
+		log.Error(err)
+	}
+	filesnames = tools.EachDir(path+"/"+Conf.Template.Dir, Conf.Template.Dir)
+	temp, err = template.ParseFiles(filesnames...)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Info("init all templates [ok]")
 }

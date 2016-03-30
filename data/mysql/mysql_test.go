@@ -3,7 +3,7 @@ package mysql_test
 import (
 	//	"fmt"
 	"log"
-	"study/app3/source/chatol/entity"
+	//	"study/app3/source/chatol/entity"
 	"testing"
 
 	//	"sync"
@@ -126,12 +126,17 @@ import (
 //}
 func TestMysqlExecute(t *testing.T) {
 	var repository = scdb.Connection
-	var sql = "select count(*) from users where u_age>39"
-	c, err := repository.Query(sql)
-	log.Println("Query=", c.Data, err)
-	bean := entity.NewMessageBean()
-	repository.Select(bean)
-	log.Println("Select=", bean.Entitys().JSON(), err)
+	data := make(map[string][]string)
+	data["appid"] = []string{"ffffffff"}
+	data["token"] = []string{"aaaaaaaaaaa"}
+	r, err := repository.SaveForMap("weixin", data)
+	log.Println(r, err)
+	//	var sql = "select count(*) from users where u_age>39"
+	//	c, err := repository.Query(sql)
+	//	log.Println("Query=", c.Data, err)
+	//	bean := entity.NewMessageBean()
+	//	repository.Select(bean)
+	//	log.Println("Select=", bean.Entitys().JSON(), err)
 	//log.Println("count=", bean.Entitys().JSON())
 	//	wg := sync.WaitGroup{}
 	//	wg.Add(10)

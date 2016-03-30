@@ -447,3 +447,53 @@ func (this sift) Swap(i, j int) {
 	this.sort[i] = this.sort[j]
 	this.sort[j] = temp
 }
+
+type SCSQLM struct {
+	Data   map[string][]string
+	S_TYPE int           //当前想要执行的操作
+	Sql    string        //生成的sql
+	Args   []interface{} //参数值
+	Table  string        //表
+}
+
+func (this *SCSQLM) ParseSql() {
+	uuid := uuid.NewV1()
+	this.Data["id"] = []string{uuid.String()}
+	sql := bytes.Buffer{}
+	colm := bytes.Buffer{}
+	vals := bytes.Buffer{}
+	args := make([]interface{}, 0, len(this.Data))
+	sql.WriteString(INSERT)
+	sql.WriteString(SPACE)
+	sql.WriteString(INTO)
+	sql.WriteString(SPACE)
+	sql.WriteString(this.Table)
+	sql.WriteString(PARENTHESESL_L)
+	ki := 0
+	for key, val := range this.Data {
+		if ki > 0 {
+			colm.WriteString(",")
+			vals.WriteString(",")
+		}
+		colm.WriteString(key)
+		vals.WriteString("?")
+		vs := bytes.Buffer{}
+		for i, v := range val {
+			if i > 0 {
+				vs.WriteString(",")
+			}
+			vs.WriteString(v)
+		}
+		args = append(args, vs.String())
+		ki++
+	}
+	sql.WriteString(colm.String())
+	sql.WriteString(PARENTHESESL_R)
+	sql.WriteString(SPACE)
+	sql.WriteString(VALUES)
+	sql.WriteString(PARENTHESESL_L)
+	sql.WriteString(vals.String())
+	sql.WriteString(PARENTHESESL_R)
+	this.Sql = sql.String()
+	this.Args = args
+}

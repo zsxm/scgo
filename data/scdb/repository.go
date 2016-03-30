@@ -36,6 +36,9 @@ type RepositoryInterface interface {
 	//执行自定义DML语言. (DDL,DCL待添加)
 	Execute(sql string, args ...interface{}) (sql.Result, error)
 
+	//map保存
+	SaveForMap(table string, data map[string][]string) (sql.Result, error)
+
 	//执行自定义DML语言. (DDL,DCL待添加)
 	Query(sql string, args ...interface{}) (data.QueryResult, error)
 

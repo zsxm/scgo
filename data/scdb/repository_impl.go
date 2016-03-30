@@ -294,6 +294,17 @@ func (this *Repository) Execute(sql string, args ...interface{}) (sql.Result, er
 	return result, nil
 }
 
+func (this *Repository) SaveForMap(table string, data map[string][]string) (sql.Result, error) {
+	if data != nil && len(data) > 0 {
+		scsqlm := scsql.SCSQLM{Table: table, Data: data}
+		scsqlm.ParseSql()
+		return this.Execute(scsqlm.Sql, scsqlm.Args...)
+	} else {
+		log.Error("data is null")
+	}
+	return nil, nil
+}
+
 //执行自定义DML语言. (DDL,DCL待添加)
 //return []slice,error
 func (this *Repository) Query(sql string, args ...interface{}) (data.QueryResult, error) {

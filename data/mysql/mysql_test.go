@@ -6,9 +6,7 @@ import (
 	"study/app3/source/chatol/entity"
 	"testing"
 
-	"github.com/snxamdf/scgo/data/config"
-	"github.com/snxamdf/scgo/data/mysql"
-	"github.com/snxamdf/scgo/data/scdb"
+	"github.com/zsxm/scgo/data/scdb"
 	//"sync"
 )
 
@@ -113,15 +111,25 @@ import (
 //	}
 //}
 
-func TestMysqlSelectCount(t *testing.T) {
-	config.Conf = &config.Config{
-		FilePath: "../config/db.xml",
-	}
-	mysql.New(config.Conf)
+//func TestMysqlSelectCount(t *testing.T) {
+//	config.Conf = &config.Config{
+//		FilePath: "../config/db.xml",
+//	}
+//	mysql.New(config.Conf)
+//	var repository = scdb.Connection
+//	e := entity.NewMessage()
+//	e.SetAge(30)
+//	e.Age().FieldExp().Gt().And()
+//	c, err := repository.SelectCount(e)
+//	log.Println("count=", c, err)
+//}
+func TestMysqlExecute(t *testing.T) {
 	var repository = scdb.Connection
-	e := entity.NewMessage()
-	e.SetAge(30)
-	e.Age().FieldExp().Gt().And()
-	c, err := repository.SelectCount(e)
-	log.Println("count=", c, err)
+	var sql = "select u_name,u_phone from users where u_age>39"
+	c, err := repository.Query(sql)
+	log.Println("count=", c.Data, err)
+	bean := entity.NewMessageBean()
+	repository.Select(bean)
+
+	//log.Println("count=", bean.Entitys().JSON())
 }

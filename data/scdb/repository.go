@@ -4,7 +4,6 @@ import (
 	"database/sql"
 
 	"github.com/zsxm/scgo/data"
-	"github.com/zsxm/scgo/data/scsql"
 )
 
 type RepositoryInterface interface {
@@ -35,8 +34,11 @@ type RepositoryInterface interface {
 	Delete(entity data.EntityInterface, deleted ...bool) (sql.Result, error)
 
 	//执行自定义DML语言. (DDL,DCL待添加)
-	Execute(sql string, args ...interface{})
+	Execute(sql string, args ...interface{}) (sql.Result, error)
+
+	//执行自定义DML语言. (DDL,DCL待添加)
+	Query(sql string, args ...interface{}) (data.QueryResult, error)
 
 	//语句解析
-	Prepare(csql scsql.SCSQL) (*sql.Stmt, error)
+	Prepare(csql string) (*sql.Stmt, error)
 }

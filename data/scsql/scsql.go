@@ -364,7 +364,7 @@ func (this *sift) genSort() {
 	sort.Sort(this)
 }
 
-//gen exp sift sql
+//生成条件sql和参数
 func (this *sift) genSiftSql() (string, []interface{}) {
 	this.genSort()
 	var wr bytes.Buffer
@@ -413,10 +413,15 @@ func (this *sift) genSiftSql() (string, []interface{}) {
 	return res, args
 }
 
-//sql
+//get sql
 func (this *SCSQL) SQL() string {
 	log.Info("SQL :", this.sql, "ARGS :", this.Args)
 	return this.sql
+}
+
+//set sql
+func (this *SCSQL) SetSQL(sql string) {
+	this.sql = sql
 }
 
 func (this sift) Len() int {

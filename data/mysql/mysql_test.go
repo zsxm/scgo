@@ -1,13 +1,14 @@
 package mysql_test
 
 import (
-	//"fmt"
+	//	"fmt"
 	"log"
 	"study/app3/source/chatol/entity"
 	"testing"
 
+	//	"sync"
+
 	"github.com/zsxm/scgo/data/scdb"
-	//"sync"
 )
 
 //func TestMysqlSelect(t *testing.T) {
@@ -125,11 +126,31 @@ import (
 //}
 func TestMysqlExecute(t *testing.T) {
 	var repository = scdb.Connection
-	var sql = "select u_name,u_phone from users where u_age>39"
+	var sql = "select count(*) from users where u_age>39"
 	c, err := repository.Query(sql)
-	log.Println("count=", c.Data, err)
+	log.Println("Query=", c.Data, err)
 	bean := entity.NewMessageBean()
 	repository.Select(bean)
-
+	log.Println("Select=", bean.Entitys().JSON(), err)
 	//log.Println("count=", bean.Entitys().JSON())
+	//	wg := sync.WaitGroup{}
+	//	wg.Add(10)
+	//	for i := 0; i < 10; i++ {
+	//		go func(i int) {
+	//			for j := 0; j < 100; j++ {
+	//				m := entity.NewMessage()
+	//				m.SetName(fmt.Sprint("张三1", i, j))
+	//				m.SetPhone(fmt.Sprint("15164383441", i, j))
+	//				m.SetAge(25 + i + j)
+	//				result, err := repository.Save(m)
+	//				if err == nil {
+	//					row, err := result.RowsAffected()
+	//					log.Println("Save", row, err)
+	//				}
+	//			}
+	//			wg.Done()
+	//		}(i)
+	//	}
+	//	wg.Wait()
+
 }

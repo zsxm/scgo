@@ -58,7 +58,13 @@ func (this *{{lowerFirst .Name}}Service) Delete(entity data.EntityInterface) (sq
 }
 
 //执行自定义DML语言. (DDL,DCL待添加)
-func (this *{{lowerFirst .Name}}Service) Execute(sql string, args ...interface{}) {
+func (this *{{lowerFirst .Name}}Service) Execute(sql string, args ...interface{}) (sql.Result, error) {
+	return this.repository.Execute(sql, args)
+}
+
+//执行自定义DML语言. (DDL,DCL待添加)
+func (this *{{lowerFirst .Name}}Service) Query(sql string, args ...interface{}) (data.QueryResult, error) {
+	return this.repository.Query(sql, args)
 }
 `
 

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"strconv"
 
+	"sync"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/zsxm/scgo/data"
 	"github.com/zsxm/scgo/data/dbconfig"
@@ -16,6 +18,7 @@ var Connection RepositoryInterface
 
 type Repository struct {
 	dBSource DBSourceInterface
+	sync.Mutex
 }
 
 func NewRepository(dbName string) *Repository {

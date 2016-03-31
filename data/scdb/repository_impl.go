@@ -279,6 +279,7 @@ func (this *Repository) selected(csql scsql.SCSQL, entityBean data.EntityBeanInt
 }
 
 func (this *Repository) Execute(sql string, args ...interface{}) (sql.Result, error) {
+	log.Debug(sql, args)
 	stmt, err := this.Prepare(sql)
 	if err != nil {
 		log.Error(err)
@@ -308,6 +309,7 @@ func (this *Repository) SaveForMap(table string, data map[string][]string) (sql.
 //执行自定义DML语言. (DDL,DCL待添加)
 //return []slice,error
 func (this *Repository) Query(sql string, args ...interface{}) (data.QueryResult, error) {
+	log.Debug(sql, args)
 	var result data.QueryResult
 	stmt, err := this.Prepare(sql)
 	if err != nil {

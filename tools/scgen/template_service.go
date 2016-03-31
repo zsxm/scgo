@@ -59,12 +59,17 @@ func (this *{{lowerFirst .Name}}Service) Delete(entity data.EntityInterface) (sq
 
 //执行自定义DML语言. (DDL,DCL待添加)
 func (this *{{lowerFirst .Name}}Service) Execute(sql string, args ...interface{}) (sql.Result, error) {
-	return this.repository.Execute(sql, args)
+	return this.repository.Execute(sql, args...)
 }
 
 //执行自定义DML语言. (DDL,DCL待添加)
 func (this *{{lowerFirst .Name}}Service) Query(sql string, args ...interface{}) (data.QueryResult, error) {
-	return this.repository.Query(sql, args)
+	return this.repository.Query(sql, args...)
+}
+
+//map保存
+func (this *{{lowerFirst .Name}}Service) SaveForMap(table string, data map[string][]string) (sql.Result, error) {
+	return this.repository.SaveForMap(table, data)
 }
 `
 

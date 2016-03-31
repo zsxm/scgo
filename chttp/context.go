@@ -19,6 +19,7 @@ import (
 	"github.com/zsxm/scgo/ctemplate"
 	"github.com/zsxm/scgo/data"
 	"github.com/zsxm/scgo/log"
+	"github.com/zsxm/scgo/session"
 	"github.com/zsxm/scgo/tools"
 )
 
@@ -33,6 +34,7 @@ type Context struct {
 	Params    url.Values
 	MultiFile *MultiFile
 	Method    string
+	Session   session.Interface
 }
 
 func (this *Context) SetHeader(key, val string) {
@@ -279,7 +281,12 @@ var cookieValueSanitizer = strings.NewReplacer("\n", " ", "\r", " ", ";", " ")
 func sanitizeValue(v string) string {
 	return cookieValueSanitizer.Replace(v)
 }
-func (this *Context) Cookie(name string, value string, others ...interface{}) {
+
+//func (this *Context) Cookie(){
+//		this.Request.Cookie()
+//}
+
+func (this *Context) SetCookie(name string, value string, others ...interface{}) {
 	var b bytes.Buffer
 	fmt.Fprintf(&b, "%s=%s", sanitizeName(name), sanitizeValue(value))
 	//fix cookie not work in IE
@@ -392,5 +399,5 @@ func Init() {
 	if err != nil {
 		log.Error(err)
 	}
-	log.Info("init all templates [ok]")
+	log.Info("Init all Templates [ok]")
 }

@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/zsxm/scgo/config"
-	"github.com/zsxm/scgo/filter"
 	"github.com/zsxm/scgo/log"
+	"github.com/zsxm/scgo/session"
 )
 
 type action map[string]*curl
@@ -64,7 +64,7 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					log.Error(err)
 				}
 				fc := this.FilterContext(c)
-				err = filter.Call(url, fc) //调用过滤器
+				err = Call(url, fc) //调用过滤器
 				if err != nil {
 					log.Error(err)
 					return
@@ -139,11 +139,9 @@ func (*Route) isHtml(url string) bool {
 	return false
 }
 
-func (*Route) FilterContext(c Context) filter.FilterContext {
-	fc := filter.FilterContext{}
-	fc.Params = c.Params
-	fc.Request = c.Request
-	fc.Response = c.Response
+func (*Route) FilterContext(c Context) FilterContext {
+	fc := FilterContext{}
+	fc.Context = c
 	return fc
 }
 
@@ -185,6 +183,7 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 	c.Response = w
 	c.Request = r
 	c.Params = values
+	c.Session = session.New(w, r, session.OptionsConfig)
 	return c, nil
 }
 

@@ -2,8 +2,9 @@ package cache_test
 
 import (
 	"log"
-	"scgo/sc/data/cache"
 	"testing"
+
+	"github.com/zsxm/scgo/data/cache"
 )
 
 func TestCacheSet(t *testing.T) {

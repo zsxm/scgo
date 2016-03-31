@@ -29,13 +29,13 @@ func Init(conf Config) {
 			Dial: func() (redis.Conn, error) {
 				conn, err := redis.Dial("tcp", conf.Address)
 				if err != nil {
-					log.Info(err.Error())
+					log.Error(err.Error())
 					return nil, err
 				}
 				if conf.Password != "" {
 					if _, err := conn.Do("AUTH", conf.Password); err != nil {
 						conn.Close()
-						log.Info(err.Error())
+						log.Error(err.Error())
 						return nil, err
 					}
 				}
@@ -44,11 +44,14 @@ func Init(conf Config) {
 			TestOnBorrow: func(conn redis.Conn, t time.Time) error {
 				_, err := conn.Do("PING")
 				if err != nil {
-					log.Info(err.Error())
+					log.Error(err.Error())
+				} else {
+					log.Info("Redis Connection ok, Address to:", Conf.Address)
 				}
 				return err
 			},
 		}
+		pool.TestOnBorrow(pool.Get(), time.Now())
 	}
 }
 
@@ -56,12 +59,12 @@ func send(cmd string, args ...interface{}) error {
 	conn := pool.Get()
 	defer conn.Close()
 	if err := conn.Err(); err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 		return err
 	}
 	err := conn.Send(cmd, args...)
 	if err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 		return err
 	}
 	return conn.Flush()
@@ -70,7 +73,7 @@ func send(cmd string, args ...interface{}) error {
 func HSet(key, field, value string) error {
 	err := send("HSET", key, field, value)
 	if err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 	}
 	return err
 }
@@ -78,7 +81,7 @@ func HSet(key, field, value string) error {
 func HGet(key, field string) (string, error) {
 	v, err := redis.String(do("HGET", key, field))
 	if err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 	}
 	return v, err
 }
@@ -86,7 +89,7 @@ func HGet(key, field string) (string, error) {
 func HDelete(key, field string) error {
 	err := send("HDEL", key, field)
 	if err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 	}
 	return err
 }
@@ -94,7 +97,7 @@ func HDelete(key, field string) error {
 func HExists(key, field string) bool {
 	v, err := redis.Bool(do("HEXISTS", key, field))
 	if err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 		return false
 	}
 	return v
@@ -103,9 +106,34 @@ func HExists(key, field string) bool {
 func HLen(key string) (int, error) {
 	v, err := redis.Int(do("HLEN", key))
 	if err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 	}
 	return v, err
+}
+
+func Delete(key string) error {
+	err := send("DEL", key)
+	if err != nil {
+		log.Error(err.Error())
+	}
+	return err
+}
+
+func Exists(key string) bool {
+	v, err := redis.Bool(do("EXISTS", key))
+	if err != nil {
+		log.Error(err.Error())
+		return false
+	}
+	return v
+}
+
+func Expire(key string, second int) error {
+	err := send("EXPIRE", key, second)
+	if err != nil {
+		log.Error(err.Error())
+	}
+	return err
 }
 
 func Set(key, val string) error {
@@ -122,12 +150,12 @@ func do(cmd string, args ...interface{}) (interface{}, error) {
 	conn := pool.Get()
 	defer conn.Close()
 	if err := conn.Err(); err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 		return nil, err
 	}
 	v, err := conn.Do(cmd, args...)
 	if err != nil {
-		log.Info(err.Error())
+		log.Error(err.Error())
 	}
 	return v, err
 }

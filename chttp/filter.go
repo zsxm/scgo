@@ -1,49 +1,27 @@
-package filter
+package chttp
 
 import (
-	"net/http"
-	"net/url"
 	"strings"
-
-	"github.com/zsxm/scgo/session"
 )
 
 type Filter struct {
-	url   string                    //拦截的url
+	url   string //拦截的url
+	nurl  []string
 	ffunc func(FilterContext) error //执行的函数
 }
 
 var furl []*Filter
 
 type FilterContext struct {
-	Response http.ResponseWriter
-	Request  *http.Request
-	Session  session.Interface
-	Params   url.Values
-}
-
-//设置头
-func (this *FilterContext) SetHeader(key, val string) {
-	this.Response.Header().Set(key, val)
-}
-
-//获取参数
-func (this *FilterContext) GetParam(key string) []string {
-	return this.Params[key]
-}
-
-func (this *FilterContext) Redirect(url string, status ...int) {
-	code := http.StatusFound
-	if len(status) == 1 {
-		code = status[0]
-	}
-	http.Redirect(this.Response, this.Request, url, code)
+	Context
 }
 
 //添加过滤器方法
-func Add(url string, filterMethod func(FilterContext) error) {
+//url=拦截的url,filterMethod=调用过滤器函数,nurl=不拦截的url
+func Add(url string, filterMethod func(FilterContext) error, nurl ...string) {
 	fu := &Filter{
 		url:   url,
+		nurl:  nurl,
 		ffunc: filterMethod,
 	}
 	furl = append(furl, fu)
@@ -52,6 +30,11 @@ func Add(url string, filterMethod func(FilterContext) error) {
 //调用
 func Call(curl string, fc FilterContext) error {
 	for _, v := range furl {
+		for _, nv := range v.nurl {
+			if nv == curl { //不拦截的url直接返回
+				return nil
+			}
+		}
 		if isCall(curl, v.url) {
 			err := v.ffunc(fc)
 			if err != nil {

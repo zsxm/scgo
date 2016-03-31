@@ -34,11 +34,12 @@ func (this *Config) MySqlInit() error {
 		this.Charset = "UTF8"
 	}
 	var dataSource = this.UserName + ":" + this.PassWord + "@tcp(" + this.Ip + ":" + this.Prot + ")/" + this.DBName + "?charset=" + this.Charset
-	log.Info("data source [", dataSource, "]")
 	db, err := sql.Open(this.DriverName, dataSource)
 	if err != nil {
 		log.Error(err)
 		return err
+	} else {
+		log.Info("Data Source Connection ok [", dataSource, "]")
 	}
 
 	db.SetMaxIdleConns(this.MaxIdleConns)

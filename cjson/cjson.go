@@ -12,13 +12,19 @@ type JSON struct {
 	data interface{}
 }
 
+func (this *JSON) Set(key, value string) {
+	if v, ok := this.data.(map[string]interface{}); ok {
+		v[key] = value
+	}
+}
+
 func (this *JSON) Get(key string) *JSON {
 	m := this.Data()
 	if v, ok := m[key]; ok {
 		tmpJSON := &JSON{v}
 		return tmpJSON
 	}
-	return nil
+	return this
 }
 
 func (this *JSON) String() string {
@@ -48,7 +54,7 @@ func (this *JSON) Index(i int) *JSON {
 			return tmpJSON
 		}
 	}
-	return nil
+	return this
 }
 
 func (this *JSON) Data() map[string]interface{} {

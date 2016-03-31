@@ -99,7 +99,6 @@ func (this *session) IsLogin() bool {
 		return false
 	}
 	if id, err := this.Get(principalId); err == nil {
-		log.Info("----------------------", id)
 		if id != "" {
 			return true
 		}

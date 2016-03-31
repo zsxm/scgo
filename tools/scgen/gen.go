@@ -135,6 +135,32 @@ func genLog(fileName string, annot annotation.Bean) {
 	log.Println(n, err)
 }
 
+//生成api类 xxxx_api.go
+func genApi(fileName string, annot annotation.Bean) {
+	gentity := annot.GenEntity
+	genPath := gentity.GoPath + "/" + gentity.ProjectDir + "/" + gentity.GoSourceDir + "/" + gentity.ModuleName + "/"
+	log.Println(genPath, exist(genPath))
+	fileDir := genPath + "/" + gen.GEN_API
+	log.Println(fileDir, exist(fileDir))
+	filePath := fileDir + "/" + fileName
+	log.Println(filePath, exist(filePath))
+	if !exist(fileDir) {
+		err := os.MkdirAll(fileDir, 0777)
+		log.Println("MkdirAll ", fileDir, err)
+	}
+	fout, err := os.Create(filePath)
+	defer fout.Close()
+	if err != nil {
+		log.Println(filePath, err)
+		return
+	}
+	buf := bytes.Buffer{}
+	temple := newTmpl(apiTemp)
+	temple.Execute(&buf, annot)
+	n, err := fout.Write(buf.Bytes())
+	log.Println(n, err)
+}
+
 //创建一个新模版
 func newTmpl(s string) *template.Template {
 	return template.Must(template.New("T").Funcs(tools.FuncMap).Parse(s))

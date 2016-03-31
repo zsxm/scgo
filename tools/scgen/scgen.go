@@ -79,4 +79,6 @@ func main() {
 	genService(strings.ToLower(annot.Name)+"_service.go", annot)
 	//生成log
 	genLog(strings.ToLower(annot.Name)+"_log.go", annot)
+	//生成api
+	genApi(strings.ToLower(annot.Name)+"_api.go", annot)
 }

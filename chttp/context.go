@@ -182,6 +182,7 @@ func (this *Context) JSON(v interface{}, hasIndent bool) {
 			}
 		}
 	}()
+	this.SetHeader("Content-Type", "application/text; charset=utf-8")
 	this.SetHeader("Content-Type", "application/json; charset=utf-8")
 	switch v.(type) {
 	case string:

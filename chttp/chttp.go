@@ -6,6 +6,7 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/zsxm/scgo/config"
 	"github.com/zsxm/scgo/filter"
 	"github.com/zsxm/scgo/log"
 )
@@ -27,7 +28,7 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//如果有错误就恢复 并跳转到错误页面
 	defer func() {
 		if err := recover(); err != nil {
-			if Conf.Debug {
+			if config.Conf.Debug {
 				log.Debug(err, string(debug.Stack()))
 			} else {
 				log.Info(err)
@@ -41,7 +42,7 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		url = url[0:ix]
 	}
 	if url == "/" {
-		if this.isHtml(Conf.Welcome) {
+		if this.isHtml(config.Conf.Welcome) {
 			htmlRoute.init(w, r)
 			return
 		}
@@ -70,7 +71,7 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 				murl.mfunc(c) //调用函数
 				if c.MultiFile != nil && c.MultiFile.isUpload {
-					var src = Conf.UploadPath
+					var src = config.Conf.UploadPath
 					err := c.MultiFile.Upload(src)
 					if err != nil {
 						log.Error(err)
@@ -94,30 +95,30 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 //500 error
 func (*Route) Error500(w http.ResponseWriter, r *http.Request) {
-	if Conf.Error500.Url != "" {
-		http.Redirect(w, r, Conf.Error500.Url, http.StatusFound)
+	if config.Conf.Error500.Url != "" {
+		http.Redirect(w, r, config.Conf.Error500.Url, http.StatusFound)
 		return
 	} else {
 		w.WriteHeader(500)
-		w.Write([]byte(Conf.Error500.Message))
+		w.Write([]byte(config.Conf.Error500.Message))
 	}
 }
 
 //404 error
 func (*Route) Error404(w http.ResponseWriter, r *http.Request) {
-	if Conf.Error404.Url != "" {
-		http.Redirect(w, r, Conf.Error404.Url, http.StatusFound)
+	if config.Conf.Error404.Url != "" {
+		http.Redirect(w, r, config.Conf.Error404.Url, http.StatusFound)
 		return
 	} else {
 		w.WriteHeader(404)
-		w.Write([]byte(Conf.Error404.Message))
+		w.Write([]byte(config.Conf.Error404.Message))
 	}
 }
 
 //判断是否为静态js、css、image等文件请求
 func (*Route) isStatic(url string) bool {
-	if strings.HasPrefix(url, Conf.Static.Prefix) {
-		for _, v := range Conf.Static.Ext {
+	if strings.HasPrefix(url, config.Conf.Static.Prefix) {
+		for _, v := range config.Conf.Static.Ext {
 			if strings.HasSuffix(url, v) {
 				return true
 			}
@@ -128,8 +129,8 @@ func (*Route) isStatic(url string) bool {
 
 //判断是否为静态html文件请求
 func (*Route) isHtml(url string) bool {
-	if strings.HasPrefix(url, Conf.Html.Prefix) {
-		for _, v := range Conf.Html.Ext {
+	if strings.HasPrefix(url, config.Conf.Html.Prefix) {
+		for _, v := range config.Conf.Html.Ext {
 			if strings.HasSuffix(url, v) {
 				return true
 			}
@@ -189,10 +190,10 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 
 //运行服务
 func Run() {
-	Conf.Init()
+	config.Conf.Init()
 	Init()
-	log.Info("HTTP PROT", Conf.Port, "[ok]")
-	err := http.ListenAndServe(Conf.Port, route)
+	log.Info("HTTP PROT", config.Conf.Port, "[ok]")
+	err := http.ListenAndServe(config.Conf.Port, route)
 	if err != nil {
 		log.Info(err)
 	}

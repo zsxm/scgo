@@ -1,4 +1,4 @@
-package chttp
+package config
 
 //路由配置
 var Conf *Config

@@ -2,6 +2,8 @@ package chttp
 
 import (
 	"net/http"
+
+	"github.com/zsxm/scgo/config"
 )
 
 var htmlRoute *HtmlRoute
@@ -19,7 +21,7 @@ func (this *HtmlRoute) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (this *HtmlRoute) init(w http.ResponseWriter, r *http.Request) {
 	if htmlRoute == nil {
 		htmlRoute = &HtmlRoute{
-			handle: http.StripPrefix(Conf.Html.Prefix, http.FileServer(http.Dir(Conf.Html.Dir))),
+			handle: http.StripPrefix(config.Conf.Html.Prefix, http.FileServer(http.Dir(config.Conf.Html.Dir))),
 		}
 	}
 	htmlRoute.ServeHTTP(w, r)

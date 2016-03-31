@@ -15,6 +15,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/zsxm/scgo/config"
+	"github.com/zsxm/scgo/ctemplate"
 	"github.com/zsxm/scgo/data"
 	"github.com/zsxm/scgo/log"
 	"github.com/zsxm/scgo/tools"
@@ -69,14 +71,15 @@ func (this *Context) BindData(entity data.EntityInterface) {
 }
 
 var temp *template.Template
-var filesnames []string
+var allFilesNames []string
+var includeFilesNames []string
 
 //跳转html模版页面
 func (this *Context) HTML(name string, datas interface{}) {
 	var err error
 	defer func() {
 		if err := recover(); err != nil {
-			if Conf.Debug {
+			if config.Conf.Debug {
 				log.Debug(err, string(debug.Stack()))
 			} else {
 				log.Info(err)
@@ -84,23 +87,25 @@ func (this *Context) HTML(name string, datas interface{}) {
 		}
 	}()
 
-	//	icod := &Conf.Template.Include
-	//	if len(files) == 0 && len(icod.Files) > 0 {
-	//		log.Info("parse include template. size", len(icod.Files))
-	//		files = make([]string, 0, len(icod.Files))
-	//		for _, v := range icod.Files {
-	//			files = append(files, (Conf.Template.Dir + "/" + icod.Dir + "/" + v + TEMP_SUFFIX))
-	//		}
-	//	}
-
-	//	t, err := template.ParseFiles(Conf.Template.Dir + name + TEMP_SUFFIX)
-	//	t, err = t.ParseFiles(filesnames...)
-
 	if err != nil {
 		log.Info(err)
 	}
 	dtam := dataToArrayMap(datas)
-	err = temp.ExecuteTemplate(this.Response, name+TEMP_SUFFIX, dtam)
+	if config.Conf.Debug {
+		tmpIncFns := []string{config.Conf.Template.Dir + name + TEMP_SUFFIX}
+		tmpIncFns = append(tmpIncFns, includeFilesNames...)
+		t, err := template.ParseFiles(tmpIncFns...)
+		if err != nil {
+			log.Info(err)
+		}
+		err = t.Execute(this.Response, dtam)
+	} else {
+		li := strings.LastIndex(name, "/")
+		if li != -1 {
+			name = name[li+1:]
+		}
+		err = temp.ExecuteTemplate(this.Response, name+TEMP_SUFFIX, dtam)
+	}
 	if err != nil {
 		http.Error(this.Response, err.Error(), http.StatusInternalServerError)
 	}
@@ -168,7 +173,7 @@ func dataToArrayMap(datas interface{}) ResponseData {
 func (this *Context) JSON(v interface{}, hasIndent bool) {
 	defer func() {
 		if err := recover(); err != nil {
-			if Conf.Debug {
+			if config.Conf.Debug {
 				log.Debug(err, string(debug.Stack()))
 			} else {
 				log.Info(err)
@@ -207,7 +212,7 @@ func (this *Context) JSON(v interface{}, hasIndent bool) {
 func (this *Context) Xml(data interface{}, hasIndent bool) {
 	defer func() {
 		if err := recover(); err != nil {
-			if Conf.Debug {
+			if config.Conf.Debug {
 				log.Debug(err, string(debug.Stack()))
 			} else {
 				log.Info(err)
@@ -233,7 +238,7 @@ func (this *Context) Xml(data interface{}, hasIndent bool) {
 func (this *Context) Download(file string, filename ...string) {
 	defer func() {
 		if err := recover(); err != nil {
-			if Conf.Debug {
+			if config.Conf.Debug {
 				log.Debug(err, string(debug.Stack()))
 			} else {
 				log.Info(err)
@@ -382,8 +387,8 @@ func Init() {
 	if err != nil {
 		log.Error(err)
 	}
-	filesnames = tools.EachDir(path+"/"+Conf.Template.Dir, Conf.Template.Dir)
-	temp, err = template.ParseFiles(filesnames...)
+	allFilesNames, includeFilesNames = ctemplate.Temps(path+"/"+config.Conf.Template.Dir, config.Conf.Template.Dir, TEMP_SUFFIX)
+	temp, err = template.ParseFiles(allFilesNames...)
 	if err != nil {
 		log.Error(err)
 	}

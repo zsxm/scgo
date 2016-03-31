@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/zsxm/scgo/config"
 	"github.com/zsxm/scgo/log"
 	"github.com/zsxm/scgo/tools"
 	"github.com/zsxm/scgo/tools/uuid"
@@ -62,7 +63,7 @@ func (this *MultiFile) Upload(src string) error {
 	if this.isUpload {
 		var ext string
 		if src == "" {
-			src = Conf.UploadPath
+			src = config.Conf.UploadPath
 		}
 		src = src + "/" + this.DirName
 		if !tools.Exist(src) {

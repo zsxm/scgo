@@ -2,6 +2,8 @@ package chttp
 
 import (
 	"net/http"
+
+	"github.com/zsxm/scgo/config"
 )
 
 //静态路由
@@ -20,7 +22,7 @@ func (this *StaticRoute) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (this *StaticRoute) init(w http.ResponseWriter, r *http.Request) {
 	if staticRoute == nil {
 		staticRoute = &StaticRoute{
-			handle: http.StripPrefix(Conf.Static.Prefix, http.FileServer(http.Dir(Conf.Static.Dir))),
+			handle: http.StripPrefix(config.Conf.Static.Prefix, http.FileServer(http.Dir(config.Conf.Static.Dir))),
 		}
 
 	}

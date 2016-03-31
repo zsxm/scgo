@@ -38,20 +38,3 @@ func CurrentDir() (string, error) {
 	}
 	return strings.Replace(dir, "\\", "/", -1), nil
 }
-
-func EachDir(dir, pix string) []string {
-	htmlTemps := make([]string, 0, 10)
-	filepath.Walk(dir, func(path string, fi os.FileInfo, err error) error {
-		if nil == fi {
-			return err
-		}
-		if fi.IsDir() {
-			return nil
-		}
-		path = path[strings.Index(path, pix):]
-		path = strings.Replace(path, "\\", "/", -1)
-		htmlTemps = append(htmlTemps, path)
-		return nil
-	})
-	return htmlTemps
-}

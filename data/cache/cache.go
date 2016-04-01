@@ -143,6 +143,9 @@ func Set(key, val string) error {
 
 func Get(key string) (string, error) {
 	v, err := do("GET", key)
+	if v == nil {
+		return "", err
+	}
 	return string(v.([]byte)), err
 }
 

@@ -1,8 +1,10 @@
-package tools
+package funcmap
 
 import (
+	"html/template"
 	"strings"
-	"text/template"
+
+	"github.com/zsxm/scgo/tools"
 )
 
 var (
@@ -24,10 +26,10 @@ var (
 			return v
 		},
 		"isBlank": func(s string) bool {
-			return IsBlank(s)
+			return tools.IsBlank(s)
 		},
 		"isNotBlank": func(s string) bool {
-			return IsNotBlank(s)
+			return tools.IsNotBlank(s)
 		},
 		"fieldType": func(s string) string { //判断字段类型
 			switch s {
@@ -55,3 +57,7 @@ var (
 		},
 	}
 )
+
+func AddFuncMap(funcName string, funcMethod interface{}) {
+	FuncMap[funcName] = funcMethod
+}

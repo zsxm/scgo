@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
+	"html/template"
 	"log"
 	"os"
-	"text/template"
 
-	"github.com/zsxm/scgo/tools"
+	"github.com/zsxm/scgo/funcmap"
 	"github.com/zsxm/scgo/tools/annotation"
 	"github.com/zsxm/scgo/tools/gen"
 )
@@ -163,7 +163,7 @@ func genApi(fileName string, annot annotation.Bean) {
 
 //创建一个新模版
 func newTmpl(s string) *template.Template {
-	return template.Must(template.New("T").Funcs(tools.FuncMap).Parse(s))
+	return template.Must(template.New("T").Funcs(funcmap.FuncMap).Parse(s))
 }
 
 //判断文件是否存在

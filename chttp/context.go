@@ -18,6 +18,7 @@ import (
 	"github.com/zsxm/scgo/config"
 	"github.com/zsxm/scgo/ctemplate"
 	"github.com/zsxm/scgo/data"
+	"github.com/zsxm/scgo/funcmap"
 	"github.com/zsxm/scgo/log"
 	"github.com/zsxm/scgo/session"
 	"github.com/zsxm/scgo/tools"
@@ -26,6 +27,12 @@ import (
 const (
 	TEMP_SUFFIX = ".html"
 )
+
+type Result struct {
+	Code    string
+	Codemsg string
+	Data    interface{}
+}
 
 //当前请求的上下文
 type Context struct {
@@ -39,6 +46,14 @@ type Context struct {
 
 func (this *Context) SetHeader(key, val string) {
 	this.Response.Header().Set(key, val)
+}
+
+func (this *Context) NewResult() Result {
+	return Result{
+		Code:    "0",
+		Codemsg: "ok",
+		Data:    "",
+	}
 }
 
 //获取参数
@@ -93,14 +108,20 @@ func (this *Context) HTML(name string, datas interface{}) {
 		log.Info(err)
 	}
 	dtam := dataToArrayMap(datas)
+	dtam.Url = this.Request.URL.String()
 	if config.Conf.Debug {
 		tmpIncFns := []string{config.Conf.Template.Dir + name + TEMP_SUFFIX}
 		tmpIncFns = append(tmpIncFns, includeFilesNames...)
-		t, err := template.ParseFiles(tmpIncFns...)
+		t := template.New("T").Funcs(funcmap.FuncMap)
+		t, err := t.ParseFiles(tmpIncFns...)
 		if err != nil {
-			log.Info(err)
+			log.Error(err)
 		}
-		err = t.Execute(this.Response, dtam)
+		li := strings.LastIndex(name, "/")
+		if li != -1 {
+			name = name[li+1:]
+		}
+		err = t.ExecuteTemplate(this.Response, name+TEMP_SUFFIX, dtam)
 	} else {
 		li := strings.LastIndex(name, "/")
 		if li != -1 {
@@ -109,13 +130,16 @@ func (this *Context) HTML(name string, datas interface{}) {
 		err = temp.ExecuteTemplate(this.Response, name+TEMP_SUFFIX, dtam)
 	}
 	if err != nil {
+		log.Error(err)
 		http.Error(this.Response, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 type ResponseData struct {
-	Data []interface{}
-	Page data.Page
+	Datas []interface{}
+	Data  interface{}
+	Page  data.Page
+	Url   string
 }
 
 func dataToArrayMap(datas interface{}) ResponseData {
@@ -124,7 +148,7 @@ func dataToArrayMap(datas interface{}) ResponseData {
 	case data.EntityBeanInterface:
 		bean := datas.(data.EntityBeanInterface)
 		if bean != nil {
-			rd.Data = make([]interface{}, 0, 5)
+			rd.Datas = make([]interface{}, 0, 5)
 			fieldNames := bean.FieldNames()
 			for _, val := range bean.Entitys().Values() {
 				mp := make(map[string]string)
@@ -134,14 +158,14 @@ func dataToArrayMap(datas interface{}) ResponseData {
 						mp[v] = field.Value()
 					}
 				}
-				rd.Data = append(rd.Data, mp)
+				rd.Datas = append(rd.Datas, mp)
 			}
 		}
 		break
 	case data.EntitysInterface:
 		bean := datas.(data.EntitysInterface)
 		if bean != nil {
-			rd.Data = make([]interface{}, 0, 5)
+			rd.Datas = make([]interface{}, 0, 5)
 			fieldNames := bean.FieldNames()
 			for _, val := range bean.Values() {
 				mp := make(map[string]string)
@@ -151,7 +175,7 @@ func dataToArrayMap(datas interface{}) ResponseData {
 						mp[v] = field.Value()
 					}
 				}
-				rd.Data = append(rd.Data, mp)
+				rd.Datas = append(rd.Datas, mp)
 			}
 		}
 		break
@@ -164,9 +188,11 @@ func dataToArrayMap(datas interface{}) ResponseData {
 				field := bean.Field(v)
 				mp[v] = field.Value()
 			}
-			rd.Data = append(rd.Data, mp)
+			rd.Datas = append(rd.Datas, mp)
 		}
 		break
+	default:
+		rd.Data = datas
 	}
 	return rd
 }
@@ -396,9 +422,12 @@ func Init() {
 		log.Error(err)
 	}
 	allFilesNames, includeFilesNames = ctemplate.Temps(path+"/"+config.Conf.Template.Dir, config.Conf.Template.Dir, TEMP_SUFFIX)
-	temp, err = template.ParseFiles(allFilesNames...)
-	if err != nil {
-		log.Error(err)
+
+	if !config.Conf.Debug {
+		temp, err = template.New("T").Funcs(funcmap.FuncMap).ParseFiles(allFilesNames...)
+		if err != nil {
+			log.Error(err)
+		}
 	}
 	log.Info("Init all Templates [ok]")
 }

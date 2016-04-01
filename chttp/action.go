@@ -25,7 +25,7 @@ func (this *curl) Get() *curl {
 	return this
 }
 
-//设置action url方法为Post方
+//设置action url方法为Post方式
 func (this *curl) Post() *curl {
 	this.method = POST
 	return this

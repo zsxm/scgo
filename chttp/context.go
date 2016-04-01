@@ -28,10 +28,21 @@ const (
 	TEMP_SUFFIX = ".html"
 )
 
+var temp *template.Template
+var allFilesNames []string
+var includeFilesNames []string
+
 type Result struct {
 	Code    string
 	Codemsg string
 	Data    interface{}
+}
+
+type ResponseData struct {
+	Datas []interface{}
+	Data  interface{}
+	Page  data.Page
+	Url   string
 }
 
 //当前请求的上下文
@@ -42,6 +53,7 @@ type Context struct {
 	MultiFile *MultiFile
 	Method    string
 	Session   session.Interface
+	Config    Config
 }
 
 func (this *Context) SetHeader(key, val string) {
@@ -87,10 +99,6 @@ func (this *Context) BindData(entity data.EntityInterface) {
 	}
 }
 
-var temp *template.Template
-var allFilesNames []string
-var includeFilesNames []string
-
 //跳转html模版页面
 func (this *Context) HTML(name string, datas interface{}) {
 	var err error
@@ -133,68 +141,6 @@ func (this *Context) HTML(name string, datas interface{}) {
 		log.Error(err)
 		http.Error(this.Response, err.Error(), http.StatusInternalServerError)
 	}
-}
-
-type ResponseData struct {
-	Datas []interface{}
-	Data  interface{}
-	Page  data.Page
-	Url   string
-}
-
-func dataToArrayMap(datas interface{}) ResponseData {
-	rd := ResponseData{}
-	switch datas.(type) {
-	case data.EntityBeanInterface:
-		bean := datas.(data.EntityBeanInterface)
-		if bean != nil {
-			rd.Datas = make([]interface{}, 0, 5)
-			fieldNames := bean.FieldNames()
-			for _, val := range bean.Entitys().Values() {
-				mp := make(map[string]string)
-				for _, v := range fieldNames.Names() {
-					field := val.Field(v)
-					if field != nil {
-						mp[v] = field.Value()
-					}
-				}
-				rd.Datas = append(rd.Datas, mp)
-			}
-		}
-		break
-	case data.EntitysInterface:
-		bean := datas.(data.EntitysInterface)
-		if bean != nil {
-			rd.Datas = make([]interface{}, 0, 5)
-			fieldNames := bean.FieldNames()
-			for _, val := range bean.Values() {
-				mp := make(map[string]string)
-				for _, v := range fieldNames.Names() {
-					field := val.Field(v)
-					if field != nil {
-						mp[v] = field.Value()
-					}
-				}
-				rd.Datas = append(rd.Datas, mp)
-			}
-		}
-		break
-	case data.EntityInterface:
-		bean := datas.(data.EntityInterface)
-		if bean != nil {
-			fieldNames := bean.FieldNames()
-			mp := make(map[string]string)
-			for _, v := range fieldNames.Names() {
-				field := bean.Field(v)
-				mp[v] = field.Value()
-			}
-			rd.Datas = append(rd.Datas, mp)
-		}
-		break
-	default:
-		rd.Data = datas
-	}
-	return rd
 }
 
 //响应json
@@ -297,26 +243,9 @@ func (this *Context) Redirect(url string, status ...int) {
 	http.Redirect(this.Response, this.Request, url, code)
 }
 
-var cookieNameSanitizer = strings.NewReplacer("\n", "-", "\r", "-")
-
-func sanitizeName(n string) string {
-	return cookieNameSanitizer.Replace(n)
-}
-
-var cookieValueSanitizer = strings.NewReplacer("\n", " ", "\r", " ", ";", " ")
-
-func sanitizeValue(v string) string {
-	return cookieValueSanitizer.Replace(v)
-}
-
-//func (this *Context) Cookie(){
-//		this.Request.Cookie()
-//}
-
 func (this *Context) SetCookie(name string, value string, others ...interface{}) {
 	var b bytes.Buffer
 	fmt.Fprintf(&b, "%s=%s", sanitizeName(name), sanitizeValue(value))
-	//fix cookie not work in IE
 	if len(others) > 0 {
 		switch v := others[0].(type) {
 		case int:
@@ -339,10 +268,6 @@ func (this *Context) SetCookie(name string, value string, others ...interface{})
 			}
 		}
 	}
-	// the settings below
-	// Path, Domain, Secure, HttpOnly
-	// can use nil skip set
-	// default "/"
 	if len(others) > 1 {
 		if v, ok := others[1].(string); ok && len(v) > 0 {
 			fmt.Fprintf(&b, "; Path=%s", sanitizeValue(v))
@@ -350,13 +275,11 @@ func (this *Context) SetCookie(name string, value string, others ...interface{})
 	} else {
 		fmt.Fprintf(&b, "; Path=%s", "/")
 	}
-	// default empty
 	if len(others) > 2 {
 		if v, ok := others[2].(string); ok && len(v) > 0 {
 			fmt.Fprintf(&b, "; Domain=%s", sanitizeValue(v))
 		}
 	}
-	// default empty
 	if len(others) > 3 {
 		var secure bool
 		switch v := others[3].(type) {
@@ -371,11 +294,9 @@ func (this *Context) SetCookie(name string, value string, others ...interface{})
 			fmt.Fprintf(&b, "; Secure")
 		}
 	}
-	// default false. for session cookie default true
 	httponly := false
 	if len(others) > 4 {
 		if v, ok := others[4].(bool); ok && v {
-			// HttpOnly = true
 			httponly = true
 		}
 	}
@@ -413,6 +334,73 @@ func (c *Context) Page() *data.Page {
 	}
 	page.New(pageNo, pageSize)
 	return page
+}
+
+var cookieNameSanitizer = strings.NewReplacer("\n", "-", "\r", "-")
+
+var cookieValueSanitizer = strings.NewReplacer("\n", " ", "\r", " ", ";", " ")
+
+func sanitizeName(n string) string {
+	return cookieNameSanitizer.Replace(n)
+}
+
+func sanitizeValue(v string) string {
+	return cookieValueSanitizer.Replace(v)
+}
+
+func dataToArrayMap(datas interface{}) ResponseData {
+	rd := ResponseData{}
+	switch datas.(type) {
+	case data.EntityBeanInterface:
+		bean := datas.(data.EntityBeanInterface)
+		if bean != nil {
+			rd.Datas = make([]interface{}, 0, 5)
+			fieldNames := bean.FieldNames()
+			for _, val := range bean.Entitys().Values() {
+				mp := make(map[string]string)
+				for _, v := range fieldNames.Names() {
+					field := val.Field(v)
+					if field != nil {
+						mp[v] = field.Value()
+					}
+				}
+				rd.Datas = append(rd.Datas, mp)
+			}
+		}
+		break
+	case data.EntitysInterface:
+		bean := datas.(data.EntitysInterface)
+		if bean != nil {
+			rd.Datas = make([]interface{}, 0, 5)
+			fieldNames := bean.FieldNames()
+			for _, val := range bean.Values() {
+				mp := make(map[string]string)
+				for _, v := range fieldNames.Names() {
+					field := val.Field(v)
+					if field != nil {
+						mp[v] = field.Value()
+					}
+				}
+				rd.Datas = append(rd.Datas, mp)
+			}
+		}
+		break
+	case data.EntityInterface:
+		bean := datas.(data.EntityInterface)
+		if bean != nil {
+			fieldNames := bean.FieldNames()
+			mp := make(map[string]string)
+			for _, v := range fieldNames.Names() {
+				field := bean.Field(v)
+				mp[v] = field.Value()
+			}
+			rd.Datas = append(rd.Datas, mp)
+		}
+		break
+	default:
+		rd.Data = datas
+	}
+	return rd
 }
 
 func Init() {

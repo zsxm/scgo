@@ -1,10 +1,12 @@
 package tools
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func IsBlank(s string) bool {
@@ -37,4 +39,17 @@ func CurrentDir() (string, error) {
 		return "", err
 	}
 	return strings.Replace(dir, "\\", "/", -1), nil
+}
+
+//计算当前时间和t时间在second秒之内
+//t 比较的时间，second 符合多少秒内
+func TimePoor(t string, second int) bool {
+	t1, _ := strconv.Atoi(t)
+	t2 := int(time.Now().Unix())
+	t3 := t2 - t1
+	fmt.Println(t2, t1, t2-t1)
+	if t3 < second {
+		return true
+	}
+	return false
 }

@@ -17,6 +17,8 @@ type BeanToTable struct {
 type Bean struct {
 	GenEntity *gen.GenEntity
 	TabName   string
+	Title     string
+	Comment   string
 	Name      string    //entity名称
 	Fileld    *[]Fileld //bean信息
 }
@@ -33,7 +35,7 @@ type Column struct {
 	Identif bool   //是否唯一标识
 }
 
-var regComment, _ = regexp.Compile(`go:@Table|go:@Column|go:@Identif|(value=[\S]+)`)
+var regComment, _ = regexp.Compile(`go:@Table|go:@Column|go:@Identif|(value=[\S]+)|(comment=[\S]+)|(title=[\S]+)`)
 
 func (this *Bean) ToField(fields []*ast.Field) {
 	log.Println("------ToField------")
@@ -78,7 +80,19 @@ func (this *Bean) TableName(comment string) {
 		if array[0] == "go" {
 			switch array[1] {
 			case "Table":
-				this.TabName = strings.Split(annot[1], "=")[1]
+				for _, v := range annot {
+					tmv := strings.Split(v, "=")
+					if len(tmv) > 1 {
+						k, kv := tmv[0], tmv[1]
+						if k == "value" {
+							this.TabName = kv
+						} else if k == "comment" {
+							this.Comment = kv
+						} else if k == "title" {
+							this.Title = kv
+						}
+					}
+				}
 				break
 			}
 		}

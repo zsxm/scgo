@@ -4,6 +4,33 @@ type curl struct {
 	permissions []string
 	mfunc       func(Context)
 	method      string
+	config      ControlConfigInterface
+}
+
+type Control struct {
+	config ControlConfigInterface
+}
+
+func NewControl() Control {
+	return Control{}
+}
+
+func (this *Control) Init(config ControlConfigInterface) {
+	this.config = config
+}
+
+//设置新的action
+func (this *Control) Add(url string, actionMethod func(Context)) *curl {
+	if route.action == nil {
+		route.action = make(map[string]*curl)
+	}
+	ml := &curl{
+		mfunc:  actionMethod,
+		method: ALL,
+		config: this.config,
+	}
+	route.action[url] = ml
+	return ml
 }
 
 //设置新的action

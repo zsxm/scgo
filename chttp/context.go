@@ -53,6 +53,7 @@ type context struct {
 	multiFile *MultiFile
 	method    string
 	session   session.Interface
+	config    ControlConfigInterface
 }
 
 func (this *context) SetHeader(key, val string) {

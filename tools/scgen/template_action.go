@@ -19,3 +19,22 @@ func index(c chttp.Context) {
 	c.JSON(e.JSON(), true)
 }
 `
+
+var controlTemp = `//scgen
+package action
+
+import (
+	"github.com/zsxm/scgo/chttp"
+)
+
+var controlConf = chttp.ControlConfigConfig()
+var control = chttp.NewControl()
+
+func init() {
+	controlConf.SetProject("{{.GenEntity.ProjectDir}}")
+	controlConf.SetModule("{{.GenEntity.ModuleName}}")
+	controlConf.SetTitle("{{.Title}}")
+	controlConf.SetComment("{{.Comment}}")
+	control.Init(controlConf)
+}
+`

@@ -73,6 +73,8 @@ func main() {
 	genEntity(strings.ToLower(annot.Name)+"_entity_impl.go", annot)
 	//生成Action
 	genAction(strings.ToLower(annot.Name)+"_action.go", annot)
+	//生成Action impl
+	genActionImpl(strings.ToLower(annot.Name)+"_action_impl.go", annot)
 	//生成service impl
 	genServiceImpl(strings.ToLower(annot.Name)+"_service_impl.go", annot)
 	//生成service

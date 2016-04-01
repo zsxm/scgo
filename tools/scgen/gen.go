@@ -27,34 +27,6 @@ func genEntity(fileName string, annot annotation.Bean) {
 	log.Println(n, err)
 }
 
-//生成action类 xxxx_action.go
-func genAction(fileName string, annot annotation.Bean) {
-	gentity := annot.GenEntity
-	genPath := gentity.GoPath + "/" + gentity.ProjectDir + "/" + gentity.GoSourceDir + "/" + gentity.ModuleName + "/"
-	log.Println(genPath, exist(genPath))
-	fileDir := genPath + "/" + gen.GEN_ACTION
-	log.Println(fileDir, exist(fileDir))
-	filePath := fileDir + "/" + fileName
-	log.Println(filePath, exist(filePath))
-	if !exist(fileDir) {
-		err := os.MkdirAll(fileDir, 0777)
-		log.Println("MkdirAll ", fileDir, err)
-	}
-	if !exist(filePath) {
-		fout, err := os.Create(filePath)
-		defer fout.Close()
-		if err != nil {
-			log.Println(filePath, err)
-			return
-		}
-		buf := bytes.Buffer{}
-		temple := newTmpl(actionTemp)
-		temple.Execute(&buf, annot)
-		n, err := fout.Write(buf.Bytes())
-		log.Println(n, err)
-	}
-}
-
 //生成service类 xxxx_service_impl.go
 func genServiceImpl(fileName string, annot annotation.Bean) {
 	gentity := annot.GenEntity
@@ -135,6 +107,62 @@ func genLog(fileName string, annot annotation.Bean) {
 	log.Println(n, err)
 }
 
+//生成action类 xxxx_action.go
+func genAction(fileName string, annot annotation.Bean) {
+	gentity := annot.GenEntity
+	genPath := gentity.GoPath + "/" + gentity.ProjectDir + "/" + gentity.GoSourceDir + "/" + gentity.ModuleName + "/"
+	log.Println(genPath, exist(genPath))
+	fileDir := genPath + "/" + gen.GEN_ACTION
+	log.Println(fileDir, exist(fileDir))
+	filePath := fileDir + "/" + fileName
+	log.Println(filePath, exist(filePath))
+	if !exist(fileDir) {
+		err := os.MkdirAll(fileDir, 0777)
+		log.Println("MkdirAll ", fileDir, err)
+	}
+	if !exist(filePath) {
+		fout, err := os.Create(filePath)
+		defer fout.Close()
+		if err != nil {
+			log.Println(filePath, err)
+			return
+		}
+		buf := bytes.Buffer{}
+		temple := newTmpl(actionTemp)
+		temple.Execute(&buf, annot)
+		n, err := fout.Write(buf.Bytes())
+		log.Println(n, err)
+	}
+}
+
+//生成action类 xxxx_action_impl.go
+func genActionImpl(fileName string, annot annotation.Bean) {
+	gentity := annot.GenEntity
+	genPath := gentity.GoPath + "/" + gentity.ProjectDir + "/" + gentity.GoSourceDir + "/" + gentity.ModuleName + "/"
+	log.Println(genPath, exist(genPath))
+	fileDir := genPath + "/" + gen.GEN_ACTION
+	log.Println(fileDir, exist(fileDir))
+	filePath := fileDir + "/" + fileName
+	log.Println(filePath, exist(filePath))
+	if !exist(fileDir) {
+		err := os.MkdirAll(fileDir, 0777)
+		log.Println("MkdirAll ", fileDir, err)
+	}
+	if !exist(filePath) {
+		fout, err := os.Create(filePath)
+		defer fout.Close()
+		if err != nil {
+			log.Println(filePath, err)
+			return
+		}
+		buf := bytes.Buffer{}
+		temple := newTmpl(controlTemp)
+		temple.Execute(&buf, annot)
+		n, err := fout.Write(buf.Bytes())
+		log.Println(n, err)
+	}
+}
+
 //生成api类 xxxx_api.go
 func genApi(fileName string, annot annotation.Bean) {
 	gentity := annot.GenEntity
@@ -148,17 +176,19 @@ func genApi(fileName string, annot annotation.Bean) {
 		err := os.MkdirAll(fileDir, 0777)
 		log.Println("MkdirAll ", fileDir, err)
 	}
-	fout, err := os.Create(filePath)
-	defer fout.Close()
-	if err != nil {
-		log.Println(filePath, err)
-		return
+	if !exist(filePath) {
+		fout, err := os.Create(filePath)
+		defer fout.Close()
+		if err != nil {
+			log.Println(filePath, err)
+			return
+		}
+		buf := bytes.Buffer{}
+		temple := newTmpl(apiTemp)
+		temple.Execute(&buf, annot)
+		n, err := fout.Write(buf.Bytes())
+		log.Println(n, err)
 	}
-	buf := bytes.Buffer{}
-	temple := newTmpl(apiTemp)
-	temple.Execute(&buf, annot)
-	n, err := fout.Write(buf.Bytes())
-	log.Println(n, err)
 }
 
 //创建一个新模版

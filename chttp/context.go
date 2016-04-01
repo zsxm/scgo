@@ -46,21 +46,20 @@ type ResponseData struct {
 }
 
 //当前请求的上下文
-type Context struct {
-	Response  http.ResponseWriter
-	Request   *http.Request
-	Params    url.Values
-	MultiFile *MultiFile
-	Method    string
-	Session   session.Interface
-	Config    Config
+type context struct {
+	response  http.ResponseWriter
+	request   *http.Request
+	params    url.Values
+	multiFile *MultiFile
+	method    string
+	session   session.Interface
 }
 
-func (this *Context) SetHeader(key, val string) {
-	this.Response.Header().Set(key, val)
+func (this *context) SetHeader(key, val string) {
+	this.response.Header().Set(key, val)
 }
 
-func (this *Context) NewResult() Result {
+func (this *context) NewResult() Result {
 	return Result{
 		Code:    "0",
 		Codemsg: "ok",
@@ -68,14 +67,20 @@ func (this *Context) NewResult() Result {
 	}
 }
 
-//获取参数
-func (this *Context) GetParams(key string) []string {
-	return this.Params[key]
+func (this *context) Params(key string) []string {
+	return this.params[key]
 }
 
-//获取参数
-func (this *Context) GetParam(key string) string {
-	v := this.Params[key]
+func (this *context) ParamMaps() url.Values {
+	return this.params
+}
+
+func (this *context) Method() string {
+	return this.method
+}
+
+func (this *context) Param(key string) string {
+	v := this.params[key]
 	if len(v) > 0 {
 		return v[0]
 	}
@@ -83,8 +88,8 @@ func (this *Context) GetParam(key string) string {
 }
 
 //绑定实体数据
-func (this *Context) BindData(entity data.EntityInterface) {
-	for k, v := range this.Params {
+func (this *context) BindData(entity data.EntityInterface) {
+	for k, v := range this.params {
 		var b bytes.Buffer
 		for i, v := range v {
 			if i > 0 {
@@ -99,8 +104,20 @@ func (this *Context) BindData(entity data.EntityInterface) {
 	}
 }
 
+func (this *context) Response() http.ResponseWriter {
+	return this.response
+}
+
+func (this *context) Request() *http.Request {
+	return this.request
+}
+
+func (this *context) Session() session.Interface {
+	return this.session
+}
+
 //跳转html模版页面
-func (this *Context) HTML(name string, datas interface{}) {
+func (this *context) HTML(name string, datas interface{}) {
 	var err error
 	defer func() {
 		if err := recover(); err != nil {
@@ -116,7 +133,7 @@ func (this *Context) HTML(name string, datas interface{}) {
 		log.Info(err)
 	}
 	dtam := dataToArrayMap(datas)
-	dtam.Url = this.Request.URL.String()
+	dtam.Url = this.request.URL.String()
 	if config.Conf.Debug {
 		tmpIncFns := []string{config.Conf.Template.Dir + name + TEMP_SUFFIX}
 		tmpIncFns = append(tmpIncFns, includeFilesNames...)
@@ -129,22 +146,22 @@ func (this *Context) HTML(name string, datas interface{}) {
 		if li != -1 {
 			name = name[li+1:]
 		}
-		err = t.ExecuteTemplate(this.Response, name+TEMP_SUFFIX, dtam)
+		err = t.ExecuteTemplate(this.response, name+TEMP_SUFFIX, dtam)
 	} else {
 		li := strings.LastIndex(name, "/")
 		if li != -1 {
 			name = name[li+1:]
 		}
-		err = temp.ExecuteTemplate(this.Response, name+TEMP_SUFFIX, dtam)
+		err = temp.ExecuteTemplate(this.response, name+TEMP_SUFFIX, dtam)
 	}
 	if err != nil {
 		log.Error(err)
-		http.Error(this.Response, err.Error(), http.StatusInternalServerError)
+		http.Error(this.response, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 //响应json
-func (this *Context) JSON(v interface{}, hasIndent bool) {
+func (this *context) JSON(v interface{}, hasIndent bool) {
 	defer func() {
 		if err := recover(); err != nil {
 			if config.Conf.Debug {
@@ -158,10 +175,10 @@ func (this *Context) JSON(v interface{}, hasIndent bool) {
 	this.SetHeader("Content-Type", "application/json; charset=utf-8")
 	switch v.(type) {
 	case string:
-		_, err := this.Response.Write([]byte(v.(string)))
-		//err := json.NewEncoder(this.Response).Encode(v)
+		_, err := this.response.Write([]byte(v.(string)))
+		//err := json.NewEncoder(this.response).Encode(v)
 		if err != nil {
-			http.Error(this.Response, err.Error(), http.StatusInternalServerError)
+			http.Error(this.response, err.Error(), http.StatusInternalServerError)
 		}
 		break
 	default:
@@ -173,18 +190,18 @@ func (this *Context) JSON(v interface{}, hasIndent bool) {
 			content, err = json.Marshal(v)
 		}
 		if err != nil {
-			http.Error(this.Response, err.Error(), http.StatusInternalServerError)
+			http.Error(this.response, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		_, err = this.Response.Write(content)
+		_, err = this.response.Write(content)
 		if err != nil {
-			http.Error(this.Response, err.Error(), http.StatusInternalServerError)
+			http.Error(this.response, err.Error(), http.StatusInternalServerError)
 		}
 	}
 }
 
 //xml
-func (this *Context) Xml(data interface{}, hasIndent bool) {
+func (this *context) Xml(data interface{}, hasIndent bool) {
 	defer func() {
 		if err := recover(); err != nil {
 			if config.Conf.Debug {
@@ -203,14 +220,14 @@ func (this *Context) Xml(data interface{}, hasIndent bool) {
 	}
 	this.SetHeader("Content-Type", "application/xml; charset=utf-8")
 	this.SetHeader("Content-Length", strconv.Itoa(len(content)))
-	_, err = this.Response.Write(content)
+	_, err = this.response.Write(content)
 	if err != nil {
-		http.Error(this.Response, err.Error(), http.StatusInternalServerError)
+		http.Error(this.response, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 //下载
-func (this *Context) Download(file string, filename ...string) {
+func (this *context) Download(file string, filename ...string) {
 	defer func() {
 		if err := recover(); err != nil {
 			if config.Conf.Debug {
@@ -231,19 +248,23 @@ func (this *Context) Download(file string, filename ...string) {
 	this.SetHeader("Expires", "0")
 	this.SetHeader("Cache-Control", "must-revalidate")
 	this.SetHeader("Pragma", "public")
-	http.ServeFile(this.Response, this.Request, file)
+	http.ServeFile(this.response, this.request, file)
+}
+
+func (this *context) MultiFile() *MultiFile {
+	return this.multiFile
 }
 
 //重定向
-func (this *Context) Redirect(url string, status ...int) {
+func (this *context) Redirect(url string, status ...int) {
 	code := http.StatusFound
 	if len(status) == 1 {
 		code = status[0]
 	}
-	http.Redirect(this.Response, this.Request, url, code)
+	http.Redirect(this.response, this.request, url, code)
 }
 
-func (this *Context) SetCookie(name string, value string, others ...interface{}) {
+func (this *context) SetCookie(name string, value string, others ...interface{}) {
 	var b bytes.Buffer
 	fmt.Fprintf(&b, "%s=%s", sanitizeName(name), sanitizeValue(value))
 	if len(others) > 0 {
@@ -307,28 +328,28 @@ func (this *Context) SetCookie(name string, value string, others ...interface{})
 }
 
 //write
-func (c *Context) Write(v []byte) (int, error) {
-	return c.Response.Write(v)
+func (c *context) Write(v []byte) (int, error) {
+	return c.response.Write(v)
 }
 
 //read body
-func (c *Context) ReadBody() ([]byte, error) {
-	body := c.Request.Body
+func (c *context) ReadBody() ([]byte, error) {
+	body := c.request.Body
 	defer body.Close()
 	return ioutil.ReadAll(body)
 }
 
 //Page
-func (c *Context) Page() *data.Page {
+func (c *context) Page() *data.Page {
 	page := &data.Page{}
 	var pageNo, pageSize int
-	if len(c.GetParams("pageNo")) > 0 {
-		pageNo = tools.ParseInteger(c.GetParams("pageNo")[0])
+	if len(c.Params("pageNo")) > 0 {
+		pageNo = tools.ParseInteger(c.Params("pageNo")[0])
 	} else {
 		pageNo = 1
 	}
-	if len(c.GetParams("pageSize")) > 0 {
-		pageSize = tools.ParseInteger(c.GetParams("pageSize")[0])
+	if len(c.Params("pageSize")) > 0 {
+		pageSize = tools.ParseInteger(c.Params("pageSize")[0])
 	} else {
 		pageSize = 10
 	}

@@ -70,13 +70,14 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				murl.mfunc(c) //调用函数
-				if c.MultiFile != nil && c.MultiFile.isUpload {
+				multi := c.MultiFile()
+				if multi != nil && multi.isUpload {
 					var src = config.Conf.UploadPath
-					err := c.MultiFile.Upload(src)
+					err := multi.Upload(src)
 					if err != nil {
 						log.Error(err)
 					}
-					c.MultiFile.Close()
+					multi.Close()
 				}
 			}
 		} else {
@@ -151,9 +152,9 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 	err := r.ParseForm()
 	if err != nil {
 		log.Info(err)
-		return Context{}, err
+		return nil, err
 	}
-	c := Context{}
+	c := &context{}
 	if r.Method == GET {
 		values = r.Form
 	} else {
@@ -170,7 +171,7 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 			fileHeads := r.MultipartForm.File["file"]
 			multiFile.init(fileHeads)
 			multiFile.isUpload = true
-			c.MultiFile = multiFile
+			c.multiFile = multiFile
 			values = r.Form
 		} else {
 			values = r.PostForm
@@ -179,11 +180,11 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 			}
 		}
 	}
-	c.Method = r.Method
-	c.Response = w
-	c.Request = r
-	c.Params = values
-	c.Session = session.New(w, r, session.OptionsConfig)
+	c.method = r.Method
+	c.response = w
+	c.request = r
+	c.params = values
+	c.session = session.New(w, r, session.OptionsConfig)
 	return c, nil
 }
 

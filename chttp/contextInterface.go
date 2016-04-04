@@ -29,4 +29,5 @@ type Context interface {
 	Session() session.Interface
 	Write(v []byte) (int, error)
 	Xml(data interface{}, hasIndent bool)
+	SetControlConfig(controlConfig *ControlConfig)
 }

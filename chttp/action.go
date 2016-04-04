@@ -1,22 +1,18 @@
 package chttp
 
 type curl struct {
-	permissions []string
-	mfunc       func(Context)
-	method      string
-	config      ControlConfigInterface
+	permissions   []string
+	mfunc         func(Context)
+	method        string
+	controlConfig *ControlConfig
 }
 
 type Control struct {
-	config ControlConfigInterface
+	controlConfig *ControlConfig
 }
 
-func NewControl() Control {
-	return Control{}
-}
-
-func (this *Control) Init(config ControlConfigInterface) {
-	this.config = config
+func NewControl(cc *ControlConfig) *Control {
+	return &Control{controlConfig: cc}
 }
 
 //设置新的action
@@ -25,9 +21,9 @@ func (this *Control) Add(url string, actionMethod func(Context)) *curl {
 		route.action = make(map[string]*curl)
 	}
 	ml := &curl{
-		mfunc:  actionMethod,
-		method: ALL,
-		config: this.config,
+		mfunc:         actionMethod,
+		method:        ALL,
+		controlConfig: this.controlConfig,
 	}
 	route.action[url] = ml
 	return ml

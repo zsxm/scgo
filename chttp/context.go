@@ -39,21 +39,23 @@ type Result struct {
 }
 
 type ResponseData struct {
-	Datas []interface{}
-	Data  interface{}
-	Page  data.Page
-	Url   string
+	Datas     []interface{}
+	Data      interface{}
+	Page      data.Page
+	Url       string
+	CC        *ControlConfig
+	SessionId string
 }
 
 //当前请求的上下文
 type context struct {
-	response  http.ResponseWriter
-	request   *http.Request
-	params    url.Values
-	multiFile *MultiFile
-	method    string
-	session   session.Interface
-	config    ControlConfigInterface
+	response      http.ResponseWriter
+	request       *http.Request
+	params        url.Values
+	multiFile     *MultiFile
+	method        string
+	session       session.Interface
+	controlConfig *ControlConfig
 }
 
 func (this *context) SetHeader(key, val string) {
@@ -66,6 +68,10 @@ func (this *context) NewResult() Result {
 		Codemsg: "ok",
 		Data:    "",
 	}
+}
+
+func (this *context) SetControlConfig(controlConfig *ControlConfig) {
+	this.controlConfig = controlConfig
 }
 
 func (this *context) Params(key string) []string {
@@ -133,8 +139,11 @@ func (this *context) HTML(name string, datas interface{}) {
 	if err != nil {
 		log.Info(err)
 	}
+
 	dtam := dataToArrayMap(datas)
+	dtam.CC = this.controlConfig
 	dtam.Url = this.request.URL.String()
+	dtam.SessionId = this.Session().Id()
 	if config.Conf.Debug {
 		tmpIncFns := []string{config.Conf.Template.Dir + name + TEMP_SUFFIX}
 		tmpIncFns = append(tmpIncFns, includeFilesNames...)

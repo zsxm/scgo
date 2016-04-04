@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/garyburd/redigo/redis"
+	"github.com/zsxm/scgo/data"
 	"github.com/zsxm/scgo/log"
 )
 
@@ -78,12 +79,72 @@ func HSet(key, field, value string) error {
 	return err
 }
 
+func HSetMap(key string, value map[string]string) error {
+	for k, v := range value {
+		if err := HSet(key, k, v); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func HSetEntity(key string, entity data.EntityInterface) error {
+	fields := entity.FieldNames()
+	names := fields.Names()
+	for _, v := range names {
+		tmpField := entity.Field(v)
+		if tmpField != nil {
+			if err := HSet(key, v, tmpField.Value()); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func HGet(key, field string) (string, error) {
 	v, err := redis.String(do("HGET", key, field))
 	if err != nil {
 		log.Error(err.Error())
 	}
 	return v, err
+}
+
+func HGetMap(key string) (data.Map, error) {
+	cvs, err := do("HGETALL", key)
+	result := make(data.Map)
+
+	if err != nil {
+		log.Error(err.Error())
+		return result, err
+	}
+	if vs, ok := cvs.([]interface{}); ok && cvs != nil {
+		size := len(vs)
+		for i := 0; i < size; i++ {
+			result[string(vs[i].([]byte))] = string(vs[i+1].([]byte))
+			i++
+		}
+	}
+	return result, nil
+}
+
+func HGetEntity(key string, entity data.EntityInterface) error {
+	cvs, err := do("HGETALL", key)
+	if err != nil {
+		log.Error(err.Error())
+		return err
+	}
+	if vs, ok := cvs.([]interface{}); ok && cvs != nil {
+		size := len(vs)
+		for i := 0; i < size; i++ {
+			tmpField := entity.Field(string(vs[i].([]byte)))
+			if tmpField != nil {
+				tmpField.SetValue(string(vs[i+1].([]byte)))
+			}
+			i++
+		}
+	}
+	return nil
 }
 
 func HDelete(key, field string) error {

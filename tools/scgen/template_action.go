@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	chttp.Action("{{if isNotBlank .GenEntity.ModuleName}}/{{.GenEntity.ModuleName}}{{end}}/index", index).Get()
+	control.Add("{{if isNotBlank .GenEntity.ModuleName}}/{{.GenEntity.ModuleName}}{{end}}/index", index).Get()
 }
 
 //gen
@@ -27,14 +27,11 @@ import (
 	"github.com/zsxm/scgo/chttp"
 )
 
-var controlConf = chttp.ControlConfigConfig()
-var control = chttp.NewControl()
-
-func init() {
-	controlConf.SetProject("{{.GenEntity.ProjectDir}}")
-	controlConf.SetModule("{{.GenEntity.ModuleName}}")
-	controlConf.SetTitle("{{.Title}}")
-	controlConf.SetComment("{{.Comment}}")
-	control.Init(controlConf)
+var controlConf *chttp.ControlConfig = &chttp.ControlConfig{
+	Project: "{{.GenEntity.ProjectDir}}",
+	Module:  "{{.GenEntity.ModuleName}}",
+	Title:   "{{.Title}}",
+	Comment: "{{.Comment}}",
 }
+var control = chttp.NewControl(controlConf)
 `

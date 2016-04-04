@@ -4,6 +4,8 @@ import (
 	"html/template"
 	"strings"
 
+	"github.com/zsxm/scgo/data/cache"
+	"github.com/zsxm/scgo/log"
 	"github.com/zsxm/scgo/tools"
 )
 
@@ -54,6 +56,14 @@ var (
 		},
 		"lteq": func(s, e int) bool {
 			return s <= e
+		},
+		"cache": func(key, field string) string {
+			v, err := cache.HGet(key, field)
+			if err != nil {
+				log.Error(err)
+				return ""
+			}
+			return v
 		},
 	}
 )

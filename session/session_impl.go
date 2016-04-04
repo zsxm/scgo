@@ -1,10 +1,10 @@
 package session
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
+	"github.com/zsxm/scgo/data"
 	"github.com/zsxm/scgo/data/cache"
 	"github.com/zsxm/scgo/log"
 	"github.com/zsxm/scgo/tools/uuid"
@@ -45,6 +45,16 @@ func (this *session) Id() string {
 	return this.id
 }
 
+func (this *session) GetMap() (data.Map, error) {
+	r, err := cache.HGetMap(this.key)
+	if err != nil {
+		log.Error(err)
+		return r, err
+	}
+	this.expire(this.options.MaxAge)
+	return r, nil
+}
+
 func (this *session) Get(key string) (string, error) {
 	v, err := cache.HGet(this.key, key)
 	if err != nil {
@@ -53,6 +63,26 @@ func (this *session) Get(key string) (string, error) {
 	}
 	this.expire(this.options.MaxAge)
 	return v, nil
+}
+
+func (this *session) SetEntity(entity data.EntityInterface) error {
+	err := cache.HSetEntity(this.key, entity)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	this.expire(this.options.MaxAge)
+	return nil
+}
+
+func (this *session) SetMap(value map[string]string) error {
+	err := cache.HSetMap(this.key, value)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	this.expire(this.options.MaxAge)
+	return nil
 }
 
 func (this *session) Set(key string, val string) error {
@@ -83,98 +113,8 @@ func (this *session) Clear() error {
 	return nil
 }
 
-func (this *session) AddFlash(value string, vars ...string) {
-}
-
-func (this *session) Flashes(vars ...string) []string {
-	return []string{}
-}
-
 func (this *session) Options(options *Options) {
 	this.options = options
-}
-
-func (this *session) IsLogin() bool {
-	if !this.exists(principalId) {
-		return false
-	}
-	if id, err := this.Get(principalId); err == nil {
-		if id != "" {
-			return true
-		}
-	}
-	return false
-}
-
-func (this *session) Principal() (Principal, error) {
-	p := Principal{}
-	if !this.exists(principalId) {
-		return p, errors.New("Not logged in")
-	}
-	id, err := this.Get(principalId)
-	if err != nil {
-		return p, err
-	}
-	name, err := this.Get(principalName)
-	if err != nil {
-		return p, err
-	}
-	loginName, err := this.Get(principalLoginName)
-	if err != nil {
-		return p, err
-	}
-	loginTime, err := this.Get(principalLoginTime)
-	if err != nil {
-		return p, err
-	}
-	permissions, err := this.Get(principalPermissions)
-	if err != nil {
-		return p, err
-	}
-	p.Id = id
-	p.Name = name
-	p.LoginName = loginName
-	p.LoginTime = loginTime
-	p.Permissions = permissions
-	return p, nil
-}
-
-func (this *session) SetPrincipal(value Principal) error {
-	if err := this.Set(principalId, value.Id); err != nil {
-		return err
-	}
-	if err := this.Set(principalName, value.Name); err != nil {
-		return err
-	}
-	if err := this.Set(principalLoginName, value.LoginName); err != nil {
-		return err
-	}
-	if err := this.Set(principalLoginTime, value.LoginTime); err != nil {
-		return err
-	}
-	if err := this.Set(principalPermissions, value.Permissions); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (this *session) ResetPrincipal() error {
-	if err := this.Delete(principalId); err != nil {
-		return err
-	}
-	if err := this.Delete(principalName); err != nil {
-		return err
-	}
-	if err := this.Delete(principalLoginName); err != nil {
-		return err
-	}
-	if err := this.Delete(principalLoginTime); err != nil {
-		return err
-	}
-	if err := this.Delete(principalPermissions); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (this *session) exists(key string) bool {

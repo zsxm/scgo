@@ -69,6 +69,8 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					log.Error(err)
 					return
 				}
+				//control配置
+				c.SetControlConfig(murl.controlConfig)
 				murl.mfunc(c) //调用函数
 				multi := c.MultiFile()
 				if multi != nil && multi.isUpload {

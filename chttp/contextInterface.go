@@ -27,7 +27,7 @@ type Context interface {
 	ReadBody() ([]byte, error)
 	SetCookie(name string, value string, others ...interface{})
 	Session() session.Interface
+	SetControlConfig(controlConfig *ControlConfig)
 	Write(v []byte) (int, error)
 	Xml(data interface{}, hasIndent bool)
-	SetControlConfig(controlConfig *ControlConfig)
 }

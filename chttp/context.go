@@ -39,7 +39,7 @@ type Result struct {
 }
 
 type ResponseData struct {
-	Datas     []interface{}
+	//Datas     []interface{}
 	Data      interface{}
 	Page      data.Page
 	Url       string
@@ -385,7 +385,7 @@ func dataToArrayMap(datas interface{}) ResponseData {
 	case data.EntityBeanInterface:
 		bean := datas.(data.EntityBeanInterface)
 		if bean != nil {
-			rd.Datas = make([]interface{}, 0, 5)
+			datas := make([]interface{}, 0, 5)
 			fieldNames := bean.FieldNames()
 			for _, val := range bean.Entitys().Values() {
 				mp := make(map[string]string)
@@ -395,14 +395,15 @@ func dataToArrayMap(datas interface{}) ResponseData {
 						mp[v] = field.Value()
 					}
 				}
-				rd.Datas = append(rd.Datas, mp)
+				datas = append(datas, mp)
 			}
+			rd.Data = datas
 		}
 		break
 	case data.EntitysInterface:
 		bean := datas.(data.EntitysInterface)
 		if bean != nil {
-			rd.Datas = make([]interface{}, 0, 5)
+			datas := make([]interface{}, 0, 5)
 			fieldNames := bean.FieldNames()
 			for _, val := range bean.Values() {
 				mp := make(map[string]string)
@@ -412,8 +413,9 @@ func dataToArrayMap(datas interface{}) ResponseData {
 						mp[v] = field.Value()
 					}
 				}
-				rd.Datas = append(rd.Datas, mp)
+				datas = append(datas, mp)
 			}
+			rd.Data = datas
 		}
 		break
 	case data.EntityInterface:
@@ -425,7 +427,7 @@ func dataToArrayMap(datas interface{}) ResponseData {
 				field := bean.Field(v)
 				mp[v] = field.Value()
 			}
-			rd.Datas = append(rd.Datas, mp)
+			rd.Data = mp
 		}
 		break
 	default:

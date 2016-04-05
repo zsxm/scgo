@@ -111,3 +111,5 @@ tools:<br/>
 
 框架使用的示例，示例在app3项目中，自己摸索：http://git.oschina.net/snxamdf/study
 
+建目录 $GOPATH/src/golang.org/x/ 
+git clone https://github.com/golang/net.git

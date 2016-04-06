@@ -54,7 +54,7 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		htmlRoute.init(w, r)
 		return
 	} else if murl, ok := this.action[url]; ok { //请求url判断
-		if murl.method == ALL || murl.method == r.Method { //请求方式判断
+		if (murl.method == ALL || murl.method == r.Method) && murl.mtype == MTYPE_HTTP { //请求方式判断 http
 			//判断Action Url是否设置了url权限
 			if murl.permissions != nil && len(murl.permissions) > 0 {
 
@@ -82,6 +82,10 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					multi.Close()
 				}
 			}
+		} else if murl.method == GET && murl.mtype == MTYPE_WEBSOCKET { //请求方式判断 websocket
+			ws := &WebSocketRoute{murl.wshandler}
+			ws.ServeHTTP(w, r)
+			return
 		} else {
 			if url != "/favicon.ico" {
 				log.Info("未找到 URL ", url, ",请求方式", murl.method, ",当前请求方式", r.Method)
@@ -142,6 +146,13 @@ func (*Route) isHtml(url string) bool {
 	return false
 }
 
+//判断是否为静态html文件请求
+func (*Route) isWebSocket(r *http.Request) bool {
+
+	return false
+}
+
+//过滤器上下文
 func (*Route) FilterContext(c Context) FilterContext {
 	fc := FilterContext{}
 	fc.Context = c

@@ -1,9 +1,15 @@
 package chttp
 
+import (
+	"github.com/zsxm/scgo/websocket"
+)
+
 type curl struct {
 	permissions   []string
 	mfunc         func(Context)
+	wshandler     func(*websocket.Conn)
 	method        string
+	mtype         string
 	controlConfig *ControlConfig
 }
 
@@ -16,6 +22,21 @@ func NewControl(cc *ControlConfig) *Control {
 }
 
 //设置新的action
+func (this *Control) AddWS(url string, wshandler func(*websocket.Conn)) *curl {
+	if route.action == nil {
+		route.action = make(map[string]*curl)
+	}
+	ml := &curl{
+		wshandler:     wshandler,
+		method:        GET,
+		mtype:         MTYPE_WEBSOCKET,
+		controlConfig: this.controlConfig,
+	}
+	route.action[url] = ml
+	return ml
+}
+
+//设置新的action
 func (this *Control) Add(url string, actionMethod func(Context)) *curl {
 	if route.action == nil {
 		route.action = make(map[string]*curl)
@@ -23,6 +44,7 @@ func (this *Control) Add(url string, actionMethod func(Context)) *curl {
 	ml := &curl{
 		mfunc:         actionMethod,
 		method:        ALL,
+		mtype:         MTYPE_HTTP,
 		controlConfig: this.controlConfig,
 	}
 	route.action[url] = ml
@@ -37,6 +59,7 @@ func Action(url string, actionMethod func(Context)) *curl {
 	ml := &curl{
 		mfunc:  actionMethod,
 		method: ALL,
+		mtype:  MTYPE_HTTP,
 	}
 	route.action[url] = ml
 	return ml

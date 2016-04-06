@@ -12,7 +12,12 @@ import (
 
 func New(w http.ResponseWriter, r *http.Request, o *Options) Interface {
 	// ignore error -> http: named cookie not present
-	cookie, _ := r.Cookie(cookieKey)
+	var cookie *http.Cookie
+	//cookie, _ := r.Cookie(cookieKey)
+	cookies := r.Cookies()
+	if len(cookies) > 0 {
+		cookie = cookies[0]
+	}
 	if cookie == nil {
 		sid := strings.Replace(uuid.NewV4().String(), "-", "", -1)
 		cookie = &http.Cookie{

@@ -70,7 +70,7 @@ func JsonToMap(data string) *JSON {
 	err := json.Unmarshal([]byte(data), d)
 	if err != nil {
 		log.Error(err)
-		fmt.Println(err)
+		fmt.Println("json str to map", err)
 	}
 	js.data = *d
 	return js

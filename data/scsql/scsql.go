@@ -85,7 +85,7 @@ func (this *SCSQL) PrimaryKeyIsBlank() bool {
 	columns := table.Columns()
 	for _, v := range columns {
 		field := entity.Field(v)
-		if field.PrimaryKey() && tools.IsNotBlank(field.Value()) {
+		if field != nil && field.PrimaryKey() && tools.IsNotBlank(field.Value()) {
 			return true
 		}
 	}

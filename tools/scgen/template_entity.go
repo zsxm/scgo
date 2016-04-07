@@ -6,8 +6,10 @@ package entity
 import (
 	"bytes"
 	"fmt"
-	"github.com/zsxm/scgo/data"
 	"strconv"
+
+	"github.com/zsxm/scgo/data"
+	"github.com/zsxm/scgo/tools"
 )
 
 //----------------------{{.Name}}Bean begin--------------------------------------
@@ -150,7 +152,7 @@ func (this *{{.Name}}) FieldNames() data.FieldNames {
 }
 
 func (this *{{.Name}}) Field(filedName string) data.EntityField {
-	switch filedName {
+	switch tools.Lower(filedName) {
 	{{range $field:=.Fileld}}case {{if equal (lower $field.Name) (lower $field.Column.Name)}}"{{lower $field.Name}}"{{else}}"{{lower $field.Name}}"{{if isNotBlank $field.Column.Name}}, "{{lower $field.Column.Name}}"{{end}}{{end}}:
 		{{if $field.Column.Identif}}this.{{$field.Name}}.SetPrimaryKey(true)
 		return this.{{$field.Name}}.StructType(){{else}}return this.{{$field.Name}}.StructType(){{end}}

@@ -53,3 +53,11 @@ func TimePoor(t string, second int) bool {
 	}
 	return false
 }
+
+func Lower(v string) string {
+	return strings.ToLower(v)
+}
+
+func Upper(v string) string {
+	return strings.ToUpper(v)
+}

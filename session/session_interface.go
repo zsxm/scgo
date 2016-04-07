@@ -25,7 +25,9 @@ type Interface interface {
 	Clear() error
 	Options(*Options)
 	SetMap(value map[string]string) error
+	SetKeyMap(key string, value map[string]string) error
 	GetMap() (data.Map, error)
+	GetKeyMap(key string) (data.Map, error)
 	SetEntity(entity data.EntityInterface) error
 	Id() string
 }

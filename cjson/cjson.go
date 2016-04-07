@@ -64,6 +64,22 @@ func (this *JSON) Data() map[string]interface{} {
 	return nil
 }
 
+func (this *JSON) DataMap() map[string]string {
+	mp := this.Data()
+	if mp != nil {
+		result := make(map[string]string)
+		for k, v := range mp {
+			if m, ok := v.(string); ok {
+				result[k] = m
+			} else if m, ok := v.(float64); ok {
+				result[k] = strconv.FormatFloat(m, 'f', -1, 64)
+			}
+		}
+		return result
+	}
+	return nil
+}
+
 func JsonToMap(data string) *JSON {
 	js := &JSON{}
 	d := new(interface{})

@@ -60,6 +60,16 @@ func (this *session) GetMap() (data.Map, error) {
 	return r, nil
 }
 
+func (this *session) GetKeyMap(key string) (data.Map, error) {
+	r, err := cache.HGetMap(this.key + key)
+	if err != nil {
+		log.Error(err)
+		return r, err
+	}
+	this.expire(this.options.MaxAge)
+	return r, nil
+}
+
 func (this *session) Get(key string) (string, error) {
 	v, err := cache.HGet(this.key, key)
 	if err != nil {
@@ -82,6 +92,16 @@ func (this *session) SetEntity(entity data.EntityInterface) error {
 
 func (this *session) SetMap(value map[string]string) error {
 	err := cache.HSetMap(this.key, value)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	this.expire(this.options.MaxAge)
+	return nil
+}
+
+func (this *session) SetKeyMap(key string, value map[string]string) error {
+	err := cache.HSetMap(this.key+key, value)
 	if err != nil {
 		log.Error(err)
 		return err

@@ -53,12 +53,14 @@ type FieldSort struct {
 	index int
 }
 
+//正序 参数：字段优先级
 func (this *FieldSort) Asc(index int) {
 	this.b = true
 	this.value = SORT_ASC
 	this.index = index
 }
 
+//倒序 参数：字段优先级
 func (this *FieldSort) Desc(index int) {
 	this.b = true
 	this.value = SORT_DESC

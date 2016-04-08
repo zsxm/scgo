@@ -9,6 +9,7 @@ import (
 	"github.com/zsxm/scgo/config"
 	"github.com/zsxm/scgo/log"
 	"github.com/zsxm/scgo/session"
+	"github.com/zsxm/scgo/tools/cron"
 )
 
 type action map[string]*curl
@@ -205,6 +206,7 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 func Run() {
 	config.Conf.Init()
 	Init()
+	cron.Init()
 	log.Info("HTTP PROT", config.Conf.Port, "[ok]")
 	err := http.ListenAndServe(config.Conf.Port, route)
 	if err != nil {

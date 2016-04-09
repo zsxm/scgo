@@ -2,7 +2,7 @@
 
 获取方式：<br/>
 github.com<br/>
-`go get github.com/zsxm/scgo`<br/>
+`go get -u github.com/zsxm/scgo`<br/>
 clone<br/>
 `git clone https://github.com/zsxm/scgo.git`<br/>
 

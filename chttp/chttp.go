@@ -198,6 +198,8 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 	c.response = w
 	c.request = r
 	c.params = values
+	c.url = r.URL.String()
+	c.host = r.Host
 	c.session = session.New(w, r, session.OptionsConfig)
 	return c, nil
 }

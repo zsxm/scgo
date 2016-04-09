@@ -12,11 +12,13 @@ type Context interface {
 	BindData(entity data.EntityInterface)
 	Download(file string, filename ...string)
 	HTML(name string, datas interface{})
+	Host() string
 	JSON(v interface{}, hasIndent bool)
 	Method() string
 	MultiFile() *MultiFile
 	NewResult() Result
 	SetHeader(key, val string)
+	Url() string
 	Params(key string) []string
 	Param(key string) string
 	ParamMaps() url.Values

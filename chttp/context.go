@@ -43,6 +43,7 @@ type ResponseData struct {
 	Data      interface{}
 	Page      data.Page
 	Url       string
+	Host      string
 	CC        *ControlConfig
 	SessionId string
 }
@@ -54,8 +55,18 @@ type context struct {
 	params        url.Values
 	multiFile     *MultiFile
 	method        string
+	url           string
+	host          string
 	session       session.Interface
 	controlConfig *ControlConfig
+}
+
+func (this *context) Host() string {
+	return this.host
+}
+
+func (this *context) Url() string {
+	return this.url
 }
 
 func (this *context) SetHeader(key, val string) {
@@ -142,7 +153,8 @@ func (this *context) HTML(name string, datas interface{}) {
 
 	dtam := dataToArrayMap(datas)
 	dtam.CC = this.controlConfig
-	dtam.Url = this.request.URL.String()
+	dtam.Url = this.url
+	dtam.Host = this.host
 	dtam.SessionId = this.Session().Id()
 	if config.Conf.Debug {
 		tmpIncFns := []string{config.Conf.Template.Dir + name + TEMP_SUFFIX}

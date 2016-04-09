@@ -21,7 +21,10 @@ type Config struct {
 
 var pool *redis.Pool
 
-func Init(conf Config) {
+func Init(conf *Config) {
+	if Conf == nil {
+		Conf = conf
+	}
 	if pool == nil {
 		pool = &redis.Pool{
 			MaxIdle:     conf.MaxIdle,

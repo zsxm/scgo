@@ -462,5 +462,5 @@ func Init() {
 			log.Error(err)
 		}
 	}
-	log.Info("Init all Templates [ok]")
+	log.Info("Init All Templates [OK]")
 }

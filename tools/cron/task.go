@@ -17,7 +17,7 @@ func Add(name string, method func()) {
 func Init() {
 	for k, v := range t.values {
 		v()
-		log.Println("Task Cron Start", k)
+		log.Println("Task Cron Start", k, "[OK]")
 		delete(t.values, k)
 	}
 	t = nil

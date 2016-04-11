@@ -50,7 +50,7 @@ func Init(conf *Config) {
 				if err != nil {
 					log.Error(err.Error())
 				} else {
-					log.Info("Redis Connection ok, Address to:", Conf.Address)
+					log.Info("Redis Connection [OK], IP Address:", Conf.Address)
 				}
 				return err
 			},

@@ -209,7 +209,7 @@ func Run() {
 	config.Conf.Init()
 	Init()
 	cron.Init()
-	log.Info("HTTP PROT", config.Conf.Port, "[ok]")
+	log.Info("HTTP PROT", config.Conf.Port, "[OK]")
 	err := http.ListenAndServe(config.Conf.Port, route)
 	if err != nil {
 		log.Info(err)

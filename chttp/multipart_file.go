@@ -13,7 +13,7 @@ import (
 )
 
 type MultiFile struct {
-	File       []multipart.File //文件
+	file       []multipart.File //文件
 	DirName    string           //目录名称,模块名称
 	FileName   []string         //文件名称
 	SumSize    int64            //文件总大小
@@ -26,9 +26,13 @@ type Size interface {
 	Size() int64
 }
 
+func (this *MultiFile) Files() []multipart.File {
+	return this.file
+}
+
 func (this *MultiFile) init(fileHeads []*multipart.FileHeader) {
 	size := len(fileHeads)
-	this.File = make([]multipart.File, 0, size)
+	this.file = make([]multipart.File, 0, size)
 	this.FileName = make([]string, 0, size)
 	this.Size = make([]int64, 0, size)
 	this.FileNameId = make([]string, 0, size)
@@ -38,7 +42,7 @@ func (this *MultiFile) init(fileHeads []*multipart.FileHeader) {
 			log.Error(err)
 			break
 		}
-		this.File = append(this.File, file)
+		this.file = append(this.file, file)
 		this.FileName = append(this.FileName, fileHead.Filename)
 		if s, ok := file.(Size); ok {
 			this.SumSize += s.Size()
@@ -51,7 +55,7 @@ func (this *MultiFile) init(fileHeads []*multipart.FileHeader) {
 //关闭文件
 func (this *MultiFile) Close() error {
 	if this.isUpload {
-		for _, f := range this.File {
+		for _, f := range this.file {
 			f.Close()
 		}
 	}
@@ -66,13 +70,14 @@ func (this *MultiFile) Upload(src string) error {
 			src = config.Conf.UploadPath
 		}
 		src = src + "/" + this.DirName
+		this.DirName = src
 		if !tools.Exist(src) {
 			err := os.MkdirAll(src, 0666)
 			if err != nil {
 				log.Error(err)
 			}
 		}
-		for i, file := range this.File {
+		for i, file := range this.file {
 			fileName := this.FileName[i]
 			index := strings.LastIndex(fileName, ".")
 			if index != -1 {
@@ -95,5 +100,6 @@ func (this *MultiFile) Upload(src string) error {
 		}
 	}
 	this.isUpload = false
+	this.file = nil
 	return nil
 }

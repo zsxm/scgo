@@ -36,6 +36,17 @@ func (this *JSON) String() string {
 	return ""
 }
 
+func (this *JSON) Integer() int {
+	if m, ok := this.data.(string); ok {
+		r, _ := strconv.Atoi(m)
+		return r
+	} else if m, ok := this.data.(float64); ok {
+		r, _ := strconv.Atoi(strconv.FormatFloat(m, 'f', -1, 64))
+		return r
+	}
+	return -1
+}
+
 func (this *JSON) Size() int {
 	if v, ok := this.data.([]interface{}); ok {
 		return len(v)

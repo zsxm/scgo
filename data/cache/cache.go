@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/garyburd/redigo/redis"
@@ -211,6 +212,18 @@ func Get(key string) (string, error) {
 		return "", err
 	}
 	return string(v.([]byte)), err
+}
+
+func TTL(key string) (int, error) {
+	v, err := do("TTL", key)
+	if err != nil {
+		return -1, err
+	}
+	r, err := strconv.Atoi(string(v.([]byte)))
+	if err != nil {
+		return -1, err
+	}
+	return r, nil
 }
 
 func do(cmd string, args ...interface{}) (interface{}, error) {

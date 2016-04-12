@@ -61,3 +61,7 @@ func Lower(v string) string {
 func Upper(v string) string {
 	return strings.ToUpper(v)
 }
+
+func Sleep(sleep int) {
+	time.Sleep(time.Duration(sleep) * time.Second)
+}

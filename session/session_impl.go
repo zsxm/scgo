@@ -66,7 +66,7 @@ func (this *session) GetKeyMap(key string) (data.Map, error) {
 		log.Error(err)
 		return r, err
 	}
-	this.expire(this.options.MaxAge)
+	this.expirek(this.key+key, this.options.MaxAge)
 	return r, nil
 }
 
@@ -106,7 +106,7 @@ func (this *session) SetKeyMap(key string, value map[string]string) error {
 		log.Error(err)
 		return err
 	}
-	this.expire(this.options.MaxAge)
+	this.expirek(this.key+key, this.options.MaxAge)
 	return nil
 }
 
@@ -149,6 +149,14 @@ func (this *session) exists(key string) bool {
 
 func (this *session) expire(second int) error {
 	err := cache.Expire(this.key, second)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (this *session) expirek(key string, second int) error {
+	err := cache.Expire(key, second)
 	if err != nil {
 		return err
 	}

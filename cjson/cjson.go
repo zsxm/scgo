@@ -12,7 +12,7 @@ type JSON struct {
 	data interface{}
 }
 
-func (this *JSON) Set(key, value string) {
+func (this *JSON) Set(key string, value interface{}) {
 	if v, ok := this.data.(map[string]interface{}); ok {
 		v[key] = value
 	}
@@ -43,6 +43,16 @@ func (this *JSON) Integer() int {
 	} else if m, ok := this.data.(float64); ok {
 		r, _ := strconv.Atoi(strconv.FormatFloat(m, 'f', -1, 64))
 		return r
+	}
+	return -1
+}
+
+func (this *JSON) Float() float64 {
+	if m, ok := this.data.(string); ok {
+		v, _ := strconv.ParseFloat(m, -1)
+		return v
+	} else if m, ok := this.data.(float64); ok {
+		return m
 	}
 	return -1
 }

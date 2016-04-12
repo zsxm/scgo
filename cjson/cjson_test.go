@@ -13,7 +13,13 @@ func TestJson(t *testing.T) {
      "errmsg" : "ok"
 }`
 	cmp := cjson.JsonToMap(jsn)
-	fmt.Println("111111", cmp)
+	cmp.Set("name", "123.4")
+	data := map[string]string{
+		"name": "1111",
+		"pass": "paa",
+	}
+	cmp.Set("cmp", data)
+	fmt.Println("111111", cmp.Data())
 	//	js, _ := cmp.MapToJson(mp)
 	//	fmt.Println(string(js))
 }

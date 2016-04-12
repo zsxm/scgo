@@ -49,7 +49,7 @@ func (this *JSON) Integer() int {
 
 func (this *JSON) Float() float64 {
 	if m, ok := this.data.(string); ok {
-		v, _ := strconv.ParseFloat(m, -1)
+		v, _ := strconv.ParseFloat(m, 64)
 		return v
 	} else if m, ok := this.data.(float64); ok {
 		return m

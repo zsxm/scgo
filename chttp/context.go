@@ -182,6 +182,9 @@ func (this *context) HTML(name string, datas interface{}) {
 	}
 }
 
+var vfmt0 = `{"code":"%s","codemsg":"%s","data":%s}`
+var vfmt1 = `{"code":"%s","codemsg":"%s","data":"%s"}`
+
 //响应json
 func (this *context) JSON(v interface{}, hasIndent bool) {
 	defer func() {
@@ -193,8 +196,7 @@ func (this *context) JSON(v interface{}, hasIndent bool) {
 			}
 		}
 	}()
-	this.SetHeader("Content-Type", "application/text; charset=utf-8")
-	this.SetHeader("Content-Type", "application/json; charset=utf-8")
+	this.SetHeader("Content-Type", "application/json")
 	switch v.(type) {
 	case string:
 		_, err := this.response.Write([]byte(v.(string)))
@@ -203,11 +205,45 @@ func (this *context) JSON(v interface{}, hasIndent bool) {
 			http.Error(this.response, err.Error(), http.StatusInternalServerError)
 		}
 		break
+	case Result:
+		r := v.(Result)
+		var b bytes.Buffer
+		if data, ok := r.Data.(string); ok {
+			//fmt.Println(strings.Index(data, "["), strings.Index(data, "]"), len(data))
+			if (strings.Index(data, "[") == 0 && strings.Index(data, "]") == len(data)-1) || (strings.Index(data, "{") == 0 && strings.Index(data, "}") == len(data)-1) {
+				b.WriteString(fmt.Sprintf(vfmt0, r.Code, r.Codemsg, data))
+			} else {
+				b.WriteString(fmt.Sprintf(vfmt1, r.Code, r.Codemsg, data))
+			}
+		} else {
+			var content []byte
+			var err error
+			if hasIndent {
+				content, err = json.MarshalIndent(r.Data, "", "	")
+			} else {
+				content, err = json.Marshal(r.Data)
+			}
+			if err != nil {
+				http.Error(this.response, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			if err != nil {
+				http.Error(this.response, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			b.WriteString(fmt.Sprintf(vfmt0, r.Code, r.Codemsg, content))
+		}
+		_, err := this.response.Write(b.Bytes())
+		if err != nil {
+			log.Error(err)
+			http.Error(this.response, err.Error(), http.StatusInternalServerError)
+		}
+		break
 	default:
 		var content []byte
 		var err error
 		if hasIndent {
-			content, err = json.MarshalIndent(v, "", "  ")
+			content, err = json.MarshalIndent(v, "", "	")
 		} else {
 			content, err = json.Marshal(v)
 		}

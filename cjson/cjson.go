@@ -13,6 +13,9 @@ type JSON struct {
 }
 
 func (this *JSON) Set(key string, value interface{}) {
+	if this.data == nil {
+		this.data = make(map[string]interface{})
+	}
 	if v, ok := this.data.(map[string]interface{}); ok {
 		v[key] = value
 	}
@@ -38,8 +41,11 @@ func (this *JSON) String() string {
 
 func (this *JSON) Integer() int {
 	if m, ok := this.data.(string); ok {
-		r, _ := strconv.Atoi(m)
-		return r
+		if m != "" {
+			r, _ := strconv.Atoi(m)
+			return r
+		}
+		return -1
 	} else if m, ok := this.data.(float64); ok {
 		r, _ := strconv.Atoi(strconv.FormatFloat(m, 'f', -1, 64))
 		return r
@@ -49,8 +55,11 @@ func (this *JSON) Integer() int {
 
 func (this *JSON) Float() float64 {
 	if m, ok := this.data.(string); ok {
-		v, _ := strconv.ParseFloat(m, 64)
-		return v
+		if m != "" {
+			v, _ := strconv.ParseFloat(m, 64)
+			return v
+		}
+		return -1
 	} else if m, ok := this.data.(float64); ok {
 		return m
 	}
@@ -94,6 +103,22 @@ func (this *JSON) DataMap() map[string]string {
 				result[k] = m
 			} else if m, ok := v.(float64); ok {
 				result[k] = strconv.FormatFloat(m, 'f', -1, 64)
+			}
+		}
+		return result
+	}
+	return nil
+}
+
+func (this *JSON) DataMaps() map[string][]string {
+	mp := this.Data()
+	if mp != nil {
+		result := make(map[string][]string)
+		for k, v := range mp {
+			if m, ok := v.(string); ok {
+				result[k] = []string{m}
+			} else if m, ok := v.(float64); ok {
+				result[k] = []string{strconv.FormatFloat(m, 'f', -1, 64)}
 			}
 		}
 		return result

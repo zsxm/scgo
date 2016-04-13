@@ -372,7 +372,7 @@ func (this *Repository) Prepare(sql string) (*sql.Stmt, error) {
 
 func init() {
 	dbconfig.Conf = &dbconfig.Config{
-		FilePath: `conf/db.xml`,
+		FilePath: `E:\\gopath\\src\\weixin\\conf\\db.xml`,
 	}
 	dbconfig.Conf.Init()
 	Connection = NewRepository(dbconfig.Conf.Dbs.Default)

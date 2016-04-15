@@ -51,6 +51,9 @@ func (this *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if this.isStatic(url) { //*.js、*.css、image等静态文件
 		staticRoute.init(w, r)
 		return
+	} else if this.isUpload(url) {
+		uploadRoute.init(w, r)
+		return
 	} else if this.isHtml(url) { //*.html
 		htmlRoute.init(w, r)
 		return
@@ -131,6 +134,18 @@ func (*Route) isStatic(url string) bool {
 				return true
 			}
 		}
+	}
+	return false
+}
+
+//判断是否为上传的文件服务请求
+func (*Route) isUpload(url string) bool {
+	path := config.Conf.UploadPath
+	if path[0:1] != "/" {
+		path = "/" + path
+	}
+	if strings.HasPrefix(url, path) {
+		return true
 	}
 	return false
 }

@@ -33,6 +33,12 @@ var (
 		"isNotBlank": func(s string) bool {
 			return tools.IsNotBlank(s)
 		},
+		"isNotNull": func(s interface{}) bool {
+			return s != nil
+		},
+		"isNull": func(s interface{}) bool {
+			return s == nil
+		},
 		"fieldType": func(s string) string { //判断字段类型
 			switch s {
 			case "String":

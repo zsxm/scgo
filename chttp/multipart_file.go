@@ -20,6 +20,7 @@ type MultiFile struct {
 	Size       []int64          //文件大小
 	isUpload   bool             //是否已上传完文件
 	FileNameId []string         //上传完文件的名称
+	FileSuffix []string         //文件类型后缀
 }
 
 type Size interface {
@@ -36,6 +37,7 @@ func (this *MultiFile) init(fileHeads []*multipart.FileHeader) {
 	this.FileName = make([]string, 0, size)
 	this.Size = make([]int64, 0, size)
 	this.FileNameId = make([]string, 0, size)
+	this.FileSuffix = make([]string, 0, size)
 	for _, fileHead := range fileHeads {
 		file, err := fileHead.Open()
 		if err != nil {
@@ -44,6 +46,7 @@ func (this *MultiFile) init(fileHeads []*multipart.FileHeader) {
 		}
 		this.file = append(this.file, file)
 		this.FileName = append(this.FileName, fileHead.Filename)
+		this.FileSuffix = append(this.FileSuffix, fileHead.Filename[strings.Index(fileHead.Filename, "."):])
 		if s, ok := file.(Size); ok {
 			this.SumSize += s.Size()
 			this.Size = append(this.Size, s.Size())
@@ -70,6 +73,7 @@ func (this *MultiFile) Upload(src string) error {
 			src = config.Conf.UploadPath
 		}
 		src = src + "/" + this.DirName
+		log.Println("--------------------", src)
 		this.DirName = src
 		if !tools.Exist(src) {
 			err := os.MkdirAll(src, 0666)

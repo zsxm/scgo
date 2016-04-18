@@ -1,6 +1,7 @@
 package cjson
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -35,6 +36,17 @@ func (this *JSON) String() string {
 		return m
 	} else if m, ok := this.data.(float64); ok {
 		return strconv.FormatFloat(m, 'f', -1, 64)
+	} else if m, ok := this.data.([]interface{}); ok {
+		var b bytes.Buffer
+		b.WriteString("[")
+		for i, v := range m {
+			if i > 0 {
+				b.WriteString(",")
+			}
+			b.WriteString(v.(string))
+		}
+		b.WriteString("]")
+		return b.String()
 	}
 	return ""
 }
@@ -43,6 +55,7 @@ func (this *JSON) Integer() int {
 	if m, ok := this.data.(string); ok {
 		if m != "" {
 			r, _ := strconv.Atoi(m)
+
 			return r
 		}
 		return -1
@@ -53,6 +66,16 @@ func (this *JSON) Integer() int {
 	return -1
 }
 
+func (this *JSON) Integer64() int64 {
+	if m, ok := this.data.(string); ok {
+		if m != "" {
+			r, _ := strconv.ParseInt(m, -1, 64)
+			return r
+		}
+		return -1
+	}
+	return -1
+}
 func (this *JSON) Float() float64 {
 	if m, ok := this.data.(string); ok {
 		if m != "" {

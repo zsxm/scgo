@@ -21,7 +21,7 @@ func New(w http.ResponseWriter, r *http.Request, o *Options) Interface {
 	if cookie == nil {
 		sid := strings.Replace(uuid.NewV4().String(), "-", "", -1)
 		cookie = &http.Cookie{
-			Name:     cookieKey,
+			Name:     CookieKey,
 			Value:    sid,
 			Path:     o.Path,
 			Domain:   o.Domain,
@@ -32,7 +32,7 @@ func New(w http.ResponseWriter, r *http.Request, o *Options) Interface {
 	}
 	s := &session{
 		id:      cookie.Value,
-		key:     sessionPrefix + ":" + cookie.Value,
+		key:     SessionPrefix + cookie.Value,
 		options: o,
 		request: r,
 	}

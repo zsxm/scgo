@@ -1,6 +1,6 @@
 package session
 
 const (
-	sessionPrefix        = "session"
-	cookieKey     string = "GSESSIONID"
+	SessionPrefix        = "session:"
+	CookieKey     string = "GSESSIONID"
 )

@@ -78,36 +78,49 @@ entity.go示例代码<br/>
 自动生成的代码后缀带\_impl的文件内容是一搬不需要改动的，如果改动了，再去执行该命令将会覆盖掉自己写的代码，所以在其它文件中实现。<br/>
 <br/>
 chttp:<br/>
-  *action映射<br/>
-  *请求数据绑定和响应数据封装<br/>
-  *上传文件的封装等web核心功能<br/>
+  	*action映射<br/>
+  	*请求数据绑定和响应数据封装<br/>
+  	*上传文件的封装等web核心组件<br/>
 
 chttplib:<br/>
-  *http模拟请求发送<br/>
-  *文件上传发送等<br/>
+  	*http模拟请求发送<br/>
+  	*文件上传发送等<br/>
 
 data:<br/>
-  *数据库、缓存操作封装<br/>
-  *对结构的数据转换，数据库操作核心功能<br/>
+  	*数据库、缓存操作封装<br/>
+  	*对结构的数据转换，数据库操作核心功能<br/>
 
 filter:<br/>
-  *过滤器<br/>
+  	*过滤器<br/>
 
 logger:<br/>
-  *日志输出<br/>
+  	*日志输出<br/>
 
 security:还未实现<br/>
-  *安全<br/>
+  	*安全<br/>
 
-soap: 还未实现<br/>
-  *webservice<br/>
+wsdl: <br/>
+  	*webservice wsdl<br/>
 
-template:没有什么可实现的<br/>
-  *模版转换<br/>
+websocket: <br/>
+	*html5 websocket<br/>
 
-tools:<br/>
-  *框架所有工具包<br/>
-  *代码生成包<br/>
+tools: <br/>
+  	*框架所有工具包<br/>
+  	*代码生成包<br/>
+  	*集成修改其它源码<br/>
+
+session：<br/>
+	*session会话<br/>
+
+funcmap<br/>
+	*模版使用函数<br/>
+
+cjson：<br/>
+	*json和map互转 <br/>
+
+cxml：<br/>
+	*xml解析 <br/>
 
 框架使用 微信平台配置：https://github.com/zsxm/weixin
 

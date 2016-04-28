@@ -28,6 +28,5 @@ func Unmarshal(cxml CxmlInterface, content []byte) error {
 }
 
 func Marshal(cxml CxmlInterface) ([]byte, error) {
-
 	return xml.MarshalIndent(cxml, "", " ")
 }

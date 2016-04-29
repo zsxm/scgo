@@ -356,7 +356,6 @@ func (this *Repository) Query(sql string, args ...interface{}) (data.QueryResult
 				} else {
 					tmpMap[cols[i]] = string(val.([]byte))
 				}
-
 			}
 		}
 		result.Data = append(result.Data, tmpMap)

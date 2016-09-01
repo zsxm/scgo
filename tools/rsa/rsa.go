@@ -11,7 +11,7 @@ import (
 
 //生成私钥和公钥文件
 //GenRsaKey(1024)
-func GenRsaKey(bits int) error {
+func GenKey(bits int) error {
 	// 生成私钥文件
 	privateKey, err := rsa.GenerateKey(rand.Reader, bits)
 	if err != nil {
@@ -52,7 +52,7 @@ func GenRsaKey(bits int) error {
 }
 
 // 加密
-func RsaEncrypt(data, publicKey []byte) ([]byte, error) {
+func Encrypt(data, publicKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(publicKey)
 	if block == nil {
 		return nil, errors.New("public key error")
@@ -66,7 +66,7 @@ func RsaEncrypt(data, publicKey []byte) ([]byte, error) {
 }
 
 // 解密
-func RsaDecrypt(data, privateKey []byte) ([]byte, error) {
+func Decrypt(data, privateKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(privateKey)
 	if block == nil {
 		return nil, errors.New("private key error!")

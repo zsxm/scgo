@@ -6,7 +6,8 @@ var Conf *Config
 type Config struct {
 	Static     Mapping   //静态文件 url 映射css、js、image
 	Html       Mapping   //html文件 url 映射
-	Port       string    //服务商品
+	HttpPort   string    //Http服务端口
+	HttpsPort  string    //Https服务端口
 	Error404   ErrorPage //404错误页面
 	Error500   ErrorPage //500错误页面
 	Template   Template  //html模版
@@ -15,6 +16,8 @@ type Config struct {
 	DBCfgPath  string    //数据库配置文件路径
 	UploadPath string    //上传文件目录 默认值 upload
 	Welcome    string    //默认首页 默认值 /index.html
+	TLSCrt     string
+	TLSKey     string
 }
 
 func (this *Config) Init() {

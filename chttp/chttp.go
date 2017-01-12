@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"runtime/debug"
 	"strings"
+	"sync"
 
 	"github.com/zsxm/scgo/config"
 	"github.com/zsxm/scgo/log"
@@ -221,12 +222,35 @@ func (*Route) Context(w http.ResponseWriter, r *http.Request) (Context, error) {
 
 //运行服务
 func Run() {
+	swg := sync.WaitGroup{}
+	swg.Add(1)
 	config.Conf.Init()
 	Init()
 	cron.Init()
-	log.Info("HTTP PROT", config.Conf.Port, "[OK]")
-	err := http.ListenAndServe(config.Conf.Port, route)
-	if err != nil {
-		log.Info(err)
+	if config.Conf.HttpsPort == "" {
+		config.Conf.HttpsPort = ":443"
 	}
+	if config.Conf.HttpPort == "" {
+		config.Conf.HttpPort = ":80"
+	}
+	go func() {
+		if config.Conf.TLSCrt != "" && config.Conf.TLSKey != "" {
+			log.Info("HTTPs PROT ", config.Conf.HttpsPort, "[OK]")
+			err := http.ListenAndServeTLS(config.Conf.HttpsPort, config.Conf.TLSCrt, config.Conf.TLSKey, route)
+			if err != nil {
+				log.Info(err)
+				println(err.Error())
+			}
+		}
+	}()
+
+	go func() {
+		log.Info("HTTP PROT ", config.Conf.HttpPort, "[OK]")
+		err := http.ListenAndServe(config.Conf.HttpPort, route)
+		if err != nil {
+			log.Info(err)
+			println(err.Error())
+		}
+	}()
+	swg.Wait()
 }

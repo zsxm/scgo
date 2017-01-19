@@ -31,7 +31,19 @@ func Add(url string, filterMethod func(FilterContext) error, nurl ...string) {
 func Call(curl string, fc FilterContext) error {
 	for _, v := range furl {
 		for _, nv := range v.nurl {
-			if nv == curl { //不拦截的url直接返回
+			c := strings.Split(curl, "/")
+			n := strings.Split(nv, "/")
+			var cbi, nbi bool
+			for nsai, nsa := range n {
+				if nsa == "**" {
+					nbi = true
+					continue
+				} else if len(c) > nsai && nsa == c[nsai] {
+					cbi = true
+					continue
+				}
+			}
+			if nv == curl || (nbi && cbi) { //不拦截的url直接返回
 				return nil
 			}
 		}

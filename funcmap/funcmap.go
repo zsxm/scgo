@@ -76,5 +76,5 @@ var (
 
 func AddFuncMap(funcName string, funcMethod interface{}) {
 	FuncMap[funcName] = funcMethod
-	log.Info("Add Func Map", funcName, "[OK]")
+	log.Info("Add Func Map", funcName, "\t[OK]")
 }

@@ -39,7 +39,7 @@ func (this *Config) MySqlInit() error {
 		log.Error(err)
 		return err
 	} else {
-		log.Info("Data Source Connection ok [", dataSource, "]")
+		log.Info("Data Source Connection [", dataSource, "]", "\t[OK]")
 	}
 
 	db.SetMaxIdleConns(this.MaxIdleConns)

@@ -235,7 +235,7 @@ func Run() {
 	}
 	go func() {
 		if config.Conf.TLSCrt != "" && config.Conf.TLSKey != "" {
-			log.Info("HTTPs PROT ", config.Conf.HttpsPort, "[OK]")
+			log.Info("HTTPs PROT\t", config.Conf.HttpsPort, "\t[OK]")
 			err := http.ListenAndServeTLS(config.Conf.HttpsPort, config.Conf.TLSCrt, config.Conf.TLSKey, route)
 			if err != nil {
 				log.Info(err)
@@ -245,7 +245,7 @@ func Run() {
 	}()
 
 	go func() {
-		log.Info("HTTP PROT ", config.Conf.HttpPort, "[OK]")
+		log.Info("HTTP PROT\t", config.Conf.HttpPort, "\t[OK]")
 		err := http.ListenAndServe(config.Conf.HttpPort, route)
 		if err != nil {
 			log.Info(err)
